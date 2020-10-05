@@ -1,0 +1,28 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{enumerate}
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{\subsection*{Exercise \ifx/#1/\stepcounter{exercise}\arabic{exercise}\else#1\fi}\setcounter{subexercise}{0}}
+\newcommand*{\subexercise}[1][]{
+\par{\noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}}
+
+\title{Chapter 9}
+\author{stevenjin8}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Comments and Proofs}
+\subsection*{Section 9.2.2.1}
+Note that in this context, $\mu$ is a parameter of the model,
+not $\sigma(\frac{1}{1+\exp(-\mathbf{w}^T\mathbf{x})})$.
+
+\end{document}

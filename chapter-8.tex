@@ -1,0 +1,273 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{amsthm}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{enumerate}
+\theoremstyle{plain}
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator{\diag}{diag}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{\subsection*{Exercise \ifx/#1/\stepcounter{exercise}\arabic{exercise}\else#1\fi}\setcounter{subexercise}{0}}
+\newcommand*{\subexercise}[1][]{
+\par{\noindent\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}
+\title{Chapter 8}
+\author{stevenjin8}
+\date{\today}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+\begin{document}
+\maketitle
+\section*{Comments and Proofs}
+\setcounter{section}{1}
+\subsection*{Section 8.3.1}
+I found section 8.3.1 to be quite confusing, especially
+equation 8.5:
+\begin{equation}
+    \frac{d}{d\mathbf{w}}f(\mathbf{w}) =
+    \sum\limits_{i=0}^{N}(\mu_i-y_i)\mathbf{x}_i.
+\end{equation}
+In equation (1) $f$ is the negative log likelihood and
+$\mu_i=p(y_i | \mathbf{x}_i, \mathbf{w})=\sigma(\mathbf{w}^T
+\mathbf{x})$ where $\sigma$ is the sigmoid function.
+We will prove equation (1), but first, some lemmas.
+\begin{lemma}
+The derivative of $\sigma(z)$ is $\sigma(z)(1-\sigma(z))$.
+\end{lemma}
+
+\textit{Proof}.
+\begin{align*}
+    \frac{d\sigma}{dz} & = \frac{d}{dz}\frac{1}{1+
+    e^{-z}} \\
+    & = \frac{1-1+e^{-z}}{(1+e^{-z})^2} \\
+    & = \frac{1}{1+e^{-z}}\left(1-\frac{1}{1+e^{-z}}\right)\\
+    & = \sigma(z)(1-\sigma(z))
+\end{align*}
+
+This result is not trivial, but it is quite intuitive. The
+whole point of the sigmoid function $\sigma$ is to map the
+real line to $(0,1)$ monotonically. It follows that when
+$\sigma(z)$ is extreme, the derivative should be close to $0$
+, which is exactly what we see. Perhaps, it makes more sense
+to think of the sigmoid function as the solution to the 
+differential equation:
+\[
+    \frac{dy}{dz}=y(y-1).
+\]
+
+\begin{lemma}
+    $\sigma(z)+\sigma(-z)=1$
+\end{lemma}
+
+\textit{Proof}. Since $\sigma$ is symmetric about
+$(0, \frac{1}{2}$, $\sigma(z)=1-\sigma(-z)$. It follows that
+$\sigma(z)+\sigma(-z)=1$.
+
+Now we prove equation (1). Using lemmas 1.1 and 1.2 , we can
+reduce rewrite the negative log-likelihood as \\
+\begin{align*}
+    NLL(\mathbf{w})&=-\sum \limits_{i=1}^{N}y_i\log\mu_i +
+    (1-y_i)\log(1-\mu_i) \\
+    & = -\sum \limits_{i=1}^{N}y_i\log\sigma(\mathbf{w}^{T}
+    \mathbf{x}_i) + (1 - y_i)\log\sigma(-\mathbf{w}^{T}
+    \mathbf{x}_i)
+\end{align*}
+Now, we find the derivative with respect to $\mathbf{w}$:
+\begin{align*}
+    \frac{dNLL}{d\mathbf{w}}
+    &= -\sum \limits_{i=1}^{N}y_i
+    \frac{d}{d\mathbf{w}}
+    \log\sigma(\mathbf{w}^{T}\mathbf{x}_i) + 
+    (1 - y_i)
+    \frac{d}{d\mathbf{w}}
+    \log\sigma(-\mathbf{w}^{T} \mathbf{x}_i) \\
+    &= \sum
+    y_i (1-\sigma(\mathbf{w}^{T}\mathbf{x}_i))\mathbf{x}_i
+    -(1-y_i)\sigma(\mathbf{w}^{T}\mathbf{x}_i)\mathbf{x}_i\\
+    &= \sum (\sigma(\mathbf{w}^{T}\mathbf{x}_i)-y_i)
+    \mathbf{x}_i \\
+    &= \sum (\mu_i - y_i)\mathbf{x}_i.
+\end{align*}
+
+Given lemma 1.1 and 1.2, this result comes naturally,
+but it is still a good exercise to do since the proof for
+the backpropagation algorithm is similar (but much more
+complicated).
+
+\subsection*{Section 8.3.3}
+I had a lot of trouble with equation 8.15 and 8.16. I 
+kept mixing up $\theta$ and $\theta_k$. Also, keep in
+mind that the Hessian matrix $\mathbf{H}_k$ is symmetrical
+due to the law of mixed partials.
+
+If you have not had a lot of exposure to matrix calculus (like me)
+or always forget which vectors are transposed (also me),
+you can find basic matrix derivatives
+\href{http://www.gatsby.ucl.ac.uk/teaching/courses/sntn/sntn-2017/resources/Matrix_derivatives_cribsheet.pdf}{here}.
+
+\subsection*{Section 8.6.2}
+I found this first paragraph of this section extremely confusing. Initially, I thought
+that $\mathbf{x}_i$ was the $i$th data point and $r_i  \in \{0, 1\}$ indicated whether
+$ \mathbf{x}_i$ was observed. I think the author means that given a
+data point $\mathbf{x}$, $r_i\in\{0, 1\}$ indicates whether the $i$th feature of
+$\mathbf{x}$ was observed. This section would make a lot more sense if each $\mathbf{x}_i$ 
+was replaced with $x_i$.
+
+\section*{Exercises}
+\setcounter{exercise}{2}
+\exercise
+\subexercise
+See section 8.3.1 above. 
+\subexercise
+See section 8.3.1 above. 
+\subexercise
+Let $\mathbf{H}$ be the Hessian matrix of a continuous twice-differentiable
+function $f(\mathbf{x})$. Recall that, $H_{i,j}
+= \frac{\partial^{2}f}{\partial x_i\partial x_j}$. By the law of mixed partials,
+$H_{i,j} = H_{j,i}$. In other words,  $\mathbf{H}$ is symmetric. It follows that 
+$\mathbf{H}$ has $D$ eigenvalues $\lambda_{1}, \lambda_{2}, ..., \lambda_D$.
+Since eigenvectors of different eigenvalues are linearly independent, there exists
+a orthonormal eigenbasis $\mathbf{p}_{1}, \mathbf{p}_{2}, ..., \mathbf{p}_D$ where
+$\mathbf{Hp}_i=\lambda_i\mathbf{p}_i$. If follows that
+\begin{equation}
+    \mathbf{H}=\mathbf{PDP}^T
+\end{equation}
+where $\mathbf{D}=\diag(\lambda_{1}, \lambda_{2}, ..., \lambda_D)$ and
+$\mathbf{P}=\left[\mathbf{p}_{1}\enspace\mathbf{p}_{2}\enspace...
+\enspace\mathbf{p}_D\right]$.
+
+Now we prove that all eigenvalues are positive. Following equation (2), we have
+\[
+    \mathbf{D} = \mathbf{P}^T\mathbf{HP}.
+\]
+The $i$th eigenvalue is the $i$th element of
+\begin{align*}
+    \lambda_i\mathbf{e}_i & = \mathbf{De}_i \\
+    &= \mathbf{P}^{T}\mathbf{HPe}_i \\
+    &= \mathbf{P}^{T}\mathbf{Hp}_i.
+\end{align*}
+The $i$th eigenvalue then is given by
+\begin{align*}
+    \lambda_i & = \mathbf{p}_i^T\mathbf{Hp}_i \\
+    & = \mathbf{p}_i^T\mathbf{X}^T\mathbf{SXp}_i \\
+    & = (\mathbf{Xp}_i)^T\mathbf{S}(\mathbf{Xp}_i).
+\end{align*}
+If we let $\mathbf{a}_i=\mathbf{Xp}_i$, we have
+\begin{align*}
+    \lambda_i &= \mathbf{a}_i^T\mathbf{Sa}_i \\
+    &= \sum\limits_{j=1}^{D}a_{ij}^2\mu_j(1-\mu_j) \\
+    &> 0.
+\end{align*}
+The strict inequality comes from the fact that $\mathbf{X}$ is full rank and
+$\mathbf{p}_i$ is non-zero so at least one element of 
+$\mathbf{a}_i = \mathbf{Xp}_i$ is non-zero.
+Since $\mathbf{H}$ is a symmetric matrix with positive eigenvalues, it is
+positive definite.
+
+\setcounter{exercise}{4}
+\exercise
+In this exercise we show that $\sum_{c=1}^{C}\hat{w}_{cj}=0$ for
+any feature $j$ when we are trying to maximize
+\[
+    f(\mathbf{W})=\sum \limits_{i=1}^{N}p(y_i|x_i, \mathbf{W})
+    -\sum \limits_{c=1}^{C}\lVert \mathbf{w}_c\rVert_2^2.
+\]  
+\begin{lemma}
+    $p(y|\mathbf{x}, \mathbf{W}) = p(y|\mathbf{x}, \mathbf{W}+\mathbf{A})$ where $\mathbf{A}$
+    is any matrix in the form $\mathbf{A}=
+    [\mathbf{0}\enspace a_{1}\mathbf{1}\enspace\dots\enspace a_D\mathbf{1}]$.
+\end{lemma}
+Let $\mathbf{a} = (a_{1}, \dots, a_D)$. It follows that
+\begin{align*}
+    p(y=c|\mathbf{x}, \mathbf{W}+\mathbf{A}) &=
+    \frac{\exp(w_{c0} + (\mathbf{w}_{c} + \mathbf{a})^{T}\mathbf{x})}
+    {\sum_{c'=1}^{C}\exp(w_{c'0} + (\mathbf{w}_{c'} + \mathbf{a})^{T}\mathbf{x})} \\
+    &= \frac{\exp(w_{c0} + \mathbf{w}_{c}^{T}\mathbf{x})\exp(\mathbf{a}^{T}\mathbf{x})}
+    {\sum_{c'=1}^{C}\exp(w_{c'0} +
+    \mathbf{w}_{c'}^{T}\mathbf{x})\exp(\mathbf{a}^{T}\mathbf{x})}\\
+    &= \frac{\exp(w_{c0} + \mathbf{w}_{c}^{T}\mathbf{x})}
+    {\sum_{c'=1}^{C}\exp(w_{c'0} + \mathbf{w}_{c'}^{T}\mathbf{x})} \\
+    &= p(y=c|\mathbf{x}, \mathbf{W}).
+\end{align*}
+
+Now we finish the exercise with a proof by contradiction.
+Say $\mathbf{W}$ maximizes $f$ and
+$\sum_{c=1}^{C}\hat{w}_{cj}\neq 0$ for one or more $j$. Let
+$\mathbf{W}' = \mathbf{W}- \mathbf{A}$ where $\mathbf{A} = [\mathbf{0}
+\enspace a_{1}\mathbf{1} \enspace \dots \enspace a_D\mathbf{1}]$ and $a_i 
+=\frac{1}{C}\sum_{c=1}^{C}w_{c,i}$. In other words, $\mathbf{X}'$ is $\mathbf{X}$ 
+with centered columns (except for the zeroth column). By lemma 1.3
+\begin{equation}
+    \sum \limits_{i=0}^{N}p(y_i|\mathbf{x}_i, \mathbf{W}) =
+    \sum \limits_{i=0}^{N}p(y_i|\mathbf{x}_i, \mathbf{W}').
+\end{equation}
+Since $\mathbf{X}'$ is more centered, we also have
+\begin{equation}
+    \sum \limits_{c=1}^{C} \lVert \mathbf{w}_c \rVert_2^2 >
+    \sum \limits_{c=1}^{C} \lVert \mathbf{w}'_c \rVert_2^2,
+\end{equation}
+but equations 3 and 4 imply that $f(\mathbf{W})<f(\mathbf{W}')$, contradicting
+our initial statement that $\mathbf{W}$ maximizes $f$. It follows that
+if  $\hat{\mathbf{W}}$ maximizes $f$, then $\sum_{c=1}^{C}\hat{w}_{cj}=0$ for any $j>0$.
+
+\exercise
+\subexercise
+\textit{True}. By exercise 3, $\mathbf{H}$, the Hessian of $J$,
+is positive definite.
+It follows that $J$ is convex and has a single local optimum.
+This is the multivariate equivalent
+of a function always having a positive second derivative.
+\subexercise
+\textit{False}. Since $\frac{\partial}{\partial x_i}\lVert \mathbf{w}\rVert_2^2=0$
+when $x_i=0$, $\frac{\partial J}{\partial w_i}\vert_{w_i=0}=0$ if
+and only if $\frac{\partial \ell}{\partial x_i}\vert_{w_i=0}=0$ 
+which is very unlikely.
+\subexercise
+\textit{True}. Since $\lambda=0$, minimizing $J$ is equivalent to
+maximizing $\ell$. Since the data are linearly separable, there exists
+weights $\mathbf{w} \neq \mathbf{0}$ such that our model always makes the right prediction.
+In other words, $y_i\mathbf{x}_i^T\mathbf{w}>0$. Now, consider
+$\ell(a\mathbf{w}, \mathcal{D})$ for some $a>1$. Since $\sigma$ is
+positive monotonic,
+$\sigma(y_i\mathbf{x}_i^T(a\mathbf{w}))>\sigma(y_i\mathbf{x}_i^T\mathbf{w})$
+and $\ell(a\mathbf{w}, \mathcal{D})>\ell(\mathbf{w}, \mathcal{D})$.
+It follows all the
+non-zero weights will become infinite.
+
+\subexercise
+\textit{False}. No because as $\lambda$ grows, $\hat{\mathbf{w}}$ will
+start underfitting to the data.
+\subexercise
+\textit{False}. No because as $\lambda$ grows, $\hat{\mathbf{w}}$ will
+start underfitting to the data.
+
+\exercise
+\subexercise
+The decision boundary is around $X_2=3(X_1-3)$. No errors
+on the training set as the data are linearly separable.
+\subexercise
+The decision boundary is around $X_{1}=X_{2}$ and the
+misclassification rate is $1/13$.
+\subexercise
+Since we are heavily regularizing $w_1$, $\hat{w}_1=0$ and
+our prediction will only be affected by $X_2$. A decision boundary
+is $X_2=3$ and the misclassification rate is $2/13$.
+\subexercise
+Since we are heavily regularizing $w_2$, $\hat{w}_2=0$ and
+our prediction will only be affected by $X_1$. A decision boundary
+is $X_2=5$ and the misclassification rate is $0/13$.
+\end{document}

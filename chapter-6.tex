@@ -1,0 +1,210 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{enumerate}
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\var}{var}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{\subsection*{Exercise \ifx/#1/\stepcounter{exercise}\arabic{exercise}\else#1\fi}\setcounter{subexercise}{0}}
+\newcommand*{\subexercise}[1][]{
+\par{\noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}}
+
+\title{Chapter 6}
+\author{stevenjin8}
+\date{\today}
+
+\begin{document}
+\maketitle
+\section*{Exercises}
+\exercise
+In this question we compare the misclassification rate of an arbitrary classifier
+on a random dataset versus the misclassification rate using leave one out cross
+validation (LOOCV).
+
+Since we have a completely random dataset (i.e. $mathbf{x}_i$ does not help
+us predict $y_i$) and the classes are evenly distributed ($N_1 = N_2$),
+the lowest misclassification rate any classifier could achieve would be
+$0.5$. We do not consider the classifier getting lucky.
+
+Now let us consider the misclassification rate using LOOCV:
+\begin{equation}
+    misclassification = \frac{1}{N}\sum\limits_{i=1}^{N}
+    L(y_i, f_m^{-i}(\mathbf{x}_i))
+\end{equation}
+where $L$ is a $0-1$ loss and $f_m^{-i}(\mathbf{x}_i)$ is the predicted value
+of $y_i$ given $\mathbf{x}_i$ and $\mathcal{D}_{-i}$. Since the data is random
+the best performing classifer will be the one that always picks the most common
+class in the data.
+
+Taking a closer look at $\mathcal{D}_{-i}$, if $y_i=1$ then there will be
+$N_1-1$ examples of class $1$ and $N_2$ examples of class $2$ in $\mathcal{D}_i$. Since there
+are more examples of class $2$, the best classifier will be the one that always
+picks $y=2$ and will misclassify $y_i$. If $y_i=2$ then, by the same logic,
+the best classifier trained on
+$\mathcal{D}_i$ will always predict $y=1$ and will also misclassify $y_i$.
+Since our model's prediction on $y_i$ given training data $\mathcal{D}_i$ and
+$\mathbf{x}_i$ (not that knowing $\mathbf{x}_i$ makes a difference) will always be 
+wrong, our LOOCV misclassification rate is 0, which is quite far from our 
+earlier $0.5$.
+
+From this exercise we see and extreme example of LOOCV being pessimistic. This
+pessimism is not surprising. As long as data is quality, the more of it the
+better. Whenever we do some sort of cross validation, we set aside some
+data to evaluate the performance on the model and train the model using the rest
+of the data (in LOOCV the training set has one example).
+It follows that the model trained on on the test
+set will not be as good as the one trained on all the data. Further, since we are
+doing the test-evaluate process on every data point, it is unlikely that the model
+lucks out with an easy test set. It is no surprise then that LOOCV will be
+consistently pessimistic.
+
+Another way to view the disparity between the two misclassification rates is with
+the composition of the test set. We want the test set to be representative of
+the data. This usually
+comes in the form of ensuring that the test set has the same class distribution as
+the data. Unfortunately, this is not possible with LOOCV because the test set has
+only element (unless there is only one class but why even bother with a model then).
+When the model relies heavily on the prior distributions of the classes, rather than
+the feature vectors, the effects the effects of an unrepresentative test set can be 
+best seen, as in this exercise.
+
+\exercise
+In this exercise, we fit a normal prior to some data. Each data point
+comes from a separate normal distribution with a fixed and shared
+variance and a mean that follows the prior distribution.
+\subexercise
+Recall that for some model with parameters $\boldsymbol{\theta}$
+and hyperparameters $\boldsymbol{\eta}$, the ML-II
+estimate is given by
+\begin{align*}
+   \hat{\boldsymbol{\eta}} & = \argmax_{\boldsymbol{\eta}}
+   \left[\log\int p(\mathcal{D}|\boldsymbol{\theta})p(\boldsymbol{\theta}
+   |\boldsymbol{\eta})d\boldsymbol{\theta}\right] \\
+   & = \argmax_{\boldsymbol{\eta}}\left[\log p(\mathcal{D}|\boldsymbol{\eta})\right].
+\end{align*}
+Next, we find the log-likelihood in terms of $m_{0}$ and $\tau^2_0$. From the results of
+section 5.6.2.2, we have
+\begin{align*}
+    \hat{m}_0 & = \frac{1}{N}\sum\limits_{i=0}^{6}Y_i \\
+    & = 1527.5
+\end{align*}
+and
+\begin{align*}
+    \hat{\tau}_0^2 & = \max(0, s^2-\sigma^2) \\
+    & = 1754.3
+\end{align*}
+where $s^2=2254.3$ is the empirical variance and $\sigma^2
+= 500$.
+
+\subexercise
+From section 5.6.2
+\begin{align*}
+    \mathbb{E}[\theta_1|\mathcal{D}, \tau_0^2, m_0] & = 
+    \frac{\tau_0^2 Y_1 + \sigma^2m_0}{\tau_0^2+\sigma^2} \\
+    & = 1514
+\end{align*}
+and
+\begin{align*}
+    \var[\theta_1|\mathcal{D}, \tau_0^2, m_0]
+    &= \frac{\tau_0^2\sigma^2}{\tau_0^2 + \sigma^2} \\
+    & = 389.1.
+\end{align*}
+
+\subexercise
+The $95\%$ credible interval for $\theta_i$ is
+\[
+    1514-1.96\cdot389.1 \leq \theta_i \leq 1514+1.96\cdot389.1.
+\]
+This interval is probably too thin because we fitted the 
+hyperparameters to the data.
+
+\subexercise
+If we $\sigma$ were smaller, our ML-II estimate of $m_0$
+would stay the same since the mean is an unbiased estimator,
+but $\tau_0^2$ would be much larger since the variance in the data
+will have had to have come from the prior, not the parameters.
+Our estimate of $\mathbb{E}[\theta_i|\mathcal{D}, \tau_0^2, m_0]$ would
+be closer to $Y_i$ since $Y_i$ would be more representative of the $\theta_1$.
+Finally, $\var[\theta_i|\mathcal{D}, \tau_0^2, m_0]$ would also be smaller
+as $Y_i$ would be more representative of $\theta_i$.
+
+\subsubsection*{Conclusion}
+We use results from chapters 4 and 5 to compute various estimates of the data.
+I found this questions a little out of place as there was a lot of Bayesian stats.
+I think the main point of the exercise comes in sections \textbf{c.} and
+\textbf{d.}. In \textbf{c.} we conclude that credible intervals can be unreliable when
+parameters are fitted to the data. In section \textbf{d.} we see the role that $\sigma^2$
+plays in our estimates. The most interesting one (personally) is the effect of
+$\sigma^2$ on our estimate of the prior variance $\tau_0^2$. I initially thought that
+that decreasing $\sigma^2$ would also decrease $\tau_0^2$ because the it would leave less
+room for $\theta_i$ to vary. But the fact is the opposite if we think of the variance in
+a data as a sum of the prior variance $\tau_0^2$ and the variance $\sigma^2$.
+
+\exercise
+We use the alternate formula for variance and the fact that 
+$\mathbb{E}[X^2] > \mathbb{E}[X]^2$ for this proof:
+\begin{align*}
+\mathbb{E}_{X_1, \dots, X_n \sim \mathcal{N}(|\mu, \sigma^2)}
+[\hat\sigma^2(X_1, \dots, X_n)] & = \mathbb{E}\left[\frac{1}{n}\sum X_i^2\right] -
+\mathbb{E}\left[\left(\frac{1}{n}\sum X_i\right)^2\right] \\
+& = \sum\mathbb{E}[X_i^2] - \sum\limits_{i,j}\mathbb{E}[X_iX_j] \\
+& <  \frac{1}{n}\sum\mathbb{E}[X_i^2] -  \frac{1}{n}\sum\mathbb{E}[X_i]^2 \\
+& =  \mathbb{E}[X^2] - \mathbb{E}[X]^2 \\
+& = \sigma^2.
+\end{align*}
+We derive the inequality since 
+\begin{align*}
+\sum\limits_{i,j}\mathbb{E}[X_iX_j] & = \sum\limits_{i\neq j}
+\mathbb{E}[X_i]\mathbb{E}[X_j] + \sum\limits_{i}\mathbb{E}[X_i^2] \\
+& > \sum\limits_{i\neq j}\mathbb{E}[X_i]\mathbb{E}[X_j] + \sum\limits_{i}\mathbb{E}[X_i]^2 \\
+& = \sum\limits_{i,j}\mathbb{E}[X_i]\mathbb{E}[X_j]
+\end{align*}
+(pay close attention to the indices).
+
+\exercise
+We want to find
+\[
+    \hat{\sigma}^2 = \argmax_{\sigma^2}\log p(\mathcal{D}|\mu, \sigma^2).
+\]
+First, we find the log-likelihood in terms of $\sigma^2$:
+\begin{align*}
+    \log p(\mathcal{D}|\mu, \sigma^2)
+    &= \log\prod\limits_i\frac{1}{\sqrt{\pi2\sigma^2}}
+    \exp\left(\frac{(x_i-\mu)^2}{-2\sigma^2}\right) \\
+    & = \sum\limits_i\frac{(x_i-\mu)^2}{-2\sigma^2} - \frac{1}{2}\log(2\pi\sigma^2).
+\end{align*}
+Next, we derive with respect to $\sigma^2$ and set equal to zero:
+\begin{align*}
+    \frac{\partial}{\partial\sigma^2}\log p(\mathcal{D}|\mu, \sigma^2) & = 0 \\
+    \sum\limits_i \frac{\partial}{\partial\sigma^2}
+    \left[\frac{(x_i-\mu)^2}{-2\sigma^2}
+    -\frac{1}{2}\log(2\pi\sigma^2)\right] & = 0 \\
+    \sum\limits_i\frac{(x_i-\mu)^2}{2\sigma^4}
+    -\frac{1}{2\sigma^2} & = 0 \\
+    \sum\limits_i\frac{(x_i-\mu)^2}{2\sigma^4}
+    &=\sum\limits_i\frac{1}{2\sigma^2} \\
+    \frac{1}{n}\sum\limits_i(x_i-\mu)^2
+    &=\hat\sigma^2. 
+\end{align*}
+This estimate for $\sigma^2$ is unbiased because
+\begin{align*}
+    \mathbb{E}_{X_1, \dots, X_n \sim \mathcal{N}(\mu, \sigma^2)}
+    [\hat\sigma^2(X_1, \dots, X_n)] & = \mathbb{E}\left[\frac{1}{n}\sum X_i^2\right] - \mu^2 \\
+    & = \frac{1}{n}\sum\limits_i\mathbb{E}[X^2] - \mu^2 \\
+    & = \mathbb{E}[X^2]-\mu^2 \\
+    & = \sigma^2
+\end{align*}
+where $X \sim \mathcal{N}(\mu, \sigma^2)$.
+\subsection*{Conclusion}
+We see that the sample variance is an unbiased estimator of the true variance
+when we replace the sample mean with the true mean. Intuitively, the fact that each
+observation affects the sample mean causes the sample variance to be biased. Since
+observations do not change the true mean, replacing the sample mean with the true
+means an unbiased estimation of the true variance.
+
+\end{document}
