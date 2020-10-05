@@ -12,7 +12,7 @@
 \newcounter{subexercise}
 \newcommand*{\exercise}[1][]{\subsection*{Exercise \ifx/#1/\stepcounter{exercise}\arabic{exercise}\else#1\fi}\setcounter{subexercise}{0}}
 \newcommand*{\subexercise}[1][]{
-\par{\noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}}
+\par{\noindent\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}
 
 \title{Chapter 6}
 \author{stevenjin8}
