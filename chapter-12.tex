@@ -1,0 +1,343 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{enumerate}
+\usepackage{listings}
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\var}{var}
+\DeclareMathOperator*{\tr}{tr}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{
+    \subsection*{Exercise \ifx/#1/\stepcounter{exercise}\arabic{exercise}\else#1\fi}
+    \setcounter{subexercise}{0}
+}
+\newcommand*{\subexercise}[1][]{
+\par{\noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}}
+
+\title{Chapter 9}
+\author{stevenjin8}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Exercises}
+
+\setcounter{exercise}{1}
+\exercise
+For simplicity, we assume that
+$\tilde{\mathbf{W}}_1, \ldots, \tilde{\mathbf{W}}_C$ 
+are independent and that $\mathbf\Psi$ is known. First, we find
+$\mathbb{E}[\log p(\mathbf{x}_i| \boldsymbol{\theta})|\mathbf{x}_i, \boldsymbol{\theta}^{old}]$:
+\begin{align*}
+    \mathbb{E}[\log p(\mathbf{x}_i| \boldsymbol{\theta})|\mathbf{x}_i, \boldsymbol{\theta}^{old}] &=
+    \sum\limits_{c=1}^{C}r_{ic}
+    \mathbb{E}[\log p(\mathbf{x}_i| \boldsymbol{\theta}, q_i=c)| \mathbf{x}_i, \boldsymbol{\theta}^{old}, q_i=c]\\
+    &= \sum\limits_{c=1}^{C}r_{ic}
+    \mathbb{E}[\log(p(\mathbf{x}_i| \mathbf{z}_i, q_i=c, \boldsymbol{\theta})p(\mathbf{z}_i, \boldsymbol{\theta})
+    \pi_c)| \mathbf{x}_i, \boldsymbol{\theta}^{old}, q_i=c)].
+\end{align*}
+
+We give a Gaussian prior to $\mathbf{W}_c$. The matrix normal (denoted by $\mathcal{MN}$) is given by
+\begin{equation*}
+    \mathcal{MN}(\mathbf{W}_c| \mathbf{U}, \mathbf{V}, \mathbf{M}) \propto
+    \exp \left( -\frac12
+        \mathbf{V}^{-1}(\mathbf{W}_c - \mathbf{M})^T \mathbf{U}^{-1} (\mathbf{W}_c - \mathbf{M})
+    \right)
+\end{equation*}
+and
+\begin{equation*}
+    \log \mathcal{MN} (\mathbf{W}_c| \mathbf{U}, \mathbf{V}, \mathbf{M}) = 
+    -\frac12 \mathbf{V}^{-1}(\mathbf{W}_c - \mathbf{M})^T \mathbf{U}^{-1} (\mathbf{W}_c - \mathbf{M})
+    + constant.
+\end{equation*}
+
+Next we take some derivatives (we omit the conditional for brevity):
+\begin{align*}
+    \frac{\partial}{\partial \mathbf{W}_k} \mathbb{E}
+    \left[ \log p(\mathbf{x}_i, \mathbf{z}_i| \boldsymbol{\theta}) \right] &= 
+    r_{ik} \mathbb{E} \left[
+        -\frac12\frac{\partial}{\partial \tilde{\mathbf{W}}_k}
+        (\mathbf{x}_i - \tilde{\mathbf{W}}_k \tilde{\mathbf{z}_i})^T
+        \boldsymbol\Psi^{-1}
+        (\mathbf{x}_i - \tilde{\mathbf{W}}_k \tilde{\mathbf{z}_i})
+    \right] \\
+    &= r_{ik} \mathbb{E} \left[
+        -\frac12\frac{\partial}{\partial \tilde{\mathbf{W}}_k}\left(
+            -2 \mathbf{x}_i^T\boldsymbol{\Psi}^{-1}\tilde{\mathbf{W}}_k\tilde{\mathbf{z}}_i
+            + \tilde{\mathbf{z}}_i^T\tilde{\mathbf{W}}_k\boldsymbol{\Psi}^{-1}
+            \tilde{\mathbf{W}}_k\tilde{\mathbf{z}}_i
+        \right)
+    \right] \\
+    &= r_{ik} \mathbb{E} \left[
+            \boldsymbol{\Psi}^{-1}\mathbf{x}_i\tilde{\mathbf{z}}_i^T
+            - \boldsymbol{\Psi}^{-1}
+            \tilde{\mathbf{W}}_k\tilde{\mathbf{z}}_i\tilde{\mathbf{z}}_i^T
+    \right] \\
+    &= r_{ik} \boldsymbol{\Psi}^{-1}\mathbf{x}_i
+        \mathbb{E}\left[\tilde{\mathbf{z}}_i\right]^T
+        - r_{ik}\boldsymbol{\Psi}^{-1} \tilde{\mathbf{W}}_k
+        \mathbb{E}\left[\tilde{\mathbf{z}}_i\tilde{\mathbf{z}}_i^T\right] \\ 
+    &= r_{ik} \boldsymbol{\Psi}^{-1}\mathbf{x}_i
+    \mathbf{b}_{ik}^T
+    - r_{ik}\boldsymbol{\Psi}^{-1} \tilde{\mathbf{W}}_k
+    \mathbf{C}_{ik}.
+\end{align*}
+Now the prior:
+\begin{align*}
+    &\partial \log \mathcal{MN}(\tilde{\mathbf{W}}_k
+    | \mathbf{U}, \mathbf{V}, \mathbf{M})
+    = \tr\left(
+        \partial\left(
+            \mathbf{V}^{-1}(\mathbf{M} - \tilde{\mathbf{W}}_k)^T \mathbf{U}^{-1}
+            (\mathbf{M} - \tilde{\mathbf{W}}_k)
+        \right)
+    \right) \\
+    &= \tr\left(
+        \mathbf{V}^{-1}(\partial\tilde{\mathbf{W}}_k - \mathbf{M})^T \mathbf{U}^{-1}
+        (\tilde{\mathbf{W}}_k - \mathbf{M}) +
+        \mathbf{V}^{-1}(\partial\tilde{\mathbf{W}}_k - \mathbf{M})^T \mathbf{U}^{-1}
+        (\tilde{\mathbf{W}}_k - \mathbf{M})
+    \right) \\
+    &= \tr\left(
+        \mathbf{V}^{-1}\partial\tilde{\mathbf{W}}_k^T \mathbf{U}^{-1}
+        \tilde{\mathbf{W}}_k +
+        \mathbf{V}^{-1}\tilde{\mathbf{W}}_k^T \mathbf{U}^{-1}
+        \partial\tilde{\mathbf{W}}_k
+    \right) \\
+    &= \tr\left(
+        \mathbf{V}^{-T}\tilde{\mathbf{W}}_k^T \mathbf{U}^{-T}
+        \partial\tilde{\mathbf{W}}_k +
+        \mathbf{V}^{-1}\tilde{\mathbf{W}}_k^T \mathbf{U}^{-1}
+        \partial\tilde{\mathbf{W}}_k
+    \right) \\
+    &= \tr\left(
+        \left(
+            \mathbf{V}^{-T} + \mathbf{V}^{-1}
+        \right)
+        \tilde{\mathbf{W}}_k^T
+        \left(
+            \mathbf{U}^{-T} + \mathbf{U}^{-1}
+        \right)
+        \partial \tilde{\mathbf{W}}_k
+    \right)
+\end{align*}
+so 
+\begin{equation*}
+    \frac{\partial}{\partial \mathbf{W}_k} \log \mathcal{MN}(\tilde{\mathbf{W}}_k
+    | \mathbf{U}, \mathbf{V}, \mathbf{M}) = 
+    \left(
+        \mathbf{V}^{-T} + \mathbf{V}^{-1}
+    \right)
+    \tilde{\mathbf{W}}_k
+    \left(
+        \mathbf{U}^{-T} + \mathbf{U}^{-1}
+    \right) = \boldsymbol{\Lambda}_k
+\end{equation*}
+If you ask me, that is an aesthetic equation.
+
+It follows that the MAP estimate of $\mathbf{W}_k$ is
+
+\begin{align*}
+    \mathbf0 &=
+    \frac{\partial}{\partial \mathbf{W}_k} \mathbb{E}
+    \left[ \log p(\mathcal{D}, \boldsymbol{\theta})|
+    \mathbf{x}_i, \boldsymbol{\theta}^{old}\right] \\
+    \mathbf0 &= 
+    \boldsymbol{\Psi}^{-1}\sum\limits_{i=1}^N
+    r_{ik} \mathbf{x}_i \mathbf{b}_{ik}^T
+    - \boldsymbol{\Psi}^{-1} \tilde{\mathbf{W}}_k
+    \sum\limits_{i=1}^Nr_{ik}\mathbf{C}_{ik}
+    + \boldsymbol\Lambda \\
+    \boldsymbol{\Psi}^{-1} \tilde{\mathbf{W}}_k
+    \sum\limits_{i=1}^Nr_{ik}\mathbf{C}_{ik}
+    &=
+    \boldsymbol{\Psi}^{-1}\sum\limits_{i=1}^N
+    r_{ik} \mathbf{x}_i \mathbf{b}_{ik}^T
+    + \boldsymbol\Lambda \\
+    \hat{\tilde{\mathbf{W}}}_k^{MAP} &=
+    \left(
+        \sum\limits_{i=1}^N
+        r_{ik} \mathbf{x}_i \mathbf{b}_{ik}^T
+        + \boldsymbol{\Psi} \boldsymbol\Lambda
+    \right) \left(
+        \sum\limits_{i=1}^Nr_{ik}\mathbf{C}_{ik}
+    \right)^{-1}.
+\end{align*}
+
+Setting $\boldsymbol\Lambda = \mathbf0$ yields the solution to exercise 1.
+I think it is pretty cool that for exercise 1, $\boldsymbol\Psi$ is absent
+in the MLE estimate of $\hat{\tilde{\mathbf{W}}}_k$, but it is present in
+the MAP estimate. This makes sense as our certainty in our data
+should affect the influence of our prior on our estimate.
+
+Finding the MAP estimate of all the parameters is much harder because one would need to find a conjugate prior:
+\begin{equation*}
+    p(\mathbf{W}_1, \ldots, \mathbf{W}_C, \boldsymbol{\Psi}, \boldsymbol{\pi}).
+\end{equation*}
+
+\setcounter{exercise}{3}
+\exercise
+\subexercise
+\begin{align*}
+    \frac{\partial J}{\partial z_{j2}} = 0 \\
+    -2 \mathbf{v}_2 ^ T (
+        \mathbf{x}_j - z_{j1} \mathbf{v}_1 - z_{j2} \mathbf{v}_2
+    ) & = 0 \\
+    \mathbf{v}_2^T \mathbf{x}_j - z_{j1} \mathbf{v}_2^T \mathbf{v}_1 - z_{j2} \mathbf{v}_2^T \mathbf{v}_2 &= 0.
+\end{align*}
+Since $\mathbf{v}_1, \ldots, \mathbf{v}_K$ are orthonormal,
+\begin{equation*}
+    \mathbf{v}_2^T \mathbf{x}_j = x_{j2}.
+\end{equation*}
+
+\subexercise We want to minimize $\tilde{J}$ with respect to $\mathbf{v}_2$ over $||\mathbf{v}_2|| = 1$.
+\begin{align*}
+    \frac{\partial \tilde{J}}{\partial \mathbf{v}_2} =
+    -2 \mathbf{C} \mathbf{v}_2 + 2 \lambda_2 \mathbf{v}_2
+\end{align*}
+Since $\mathbf{v}_1, \ldots, \mathbf{v}_K$ are orthonormal. At the same time,
+\begin{equation*}
+    \frac{\partial ||\mathbf{v}_2||^2}{ \partial \mathbf{v}_2 } = 2 \mathbf{v}_2.
+\end{equation*}
+The critical values are given by
+\begin{align*}
+    -2 \mathbf{C} \mathbf{v}_2 + 2 \lambda_2 \mathbf{v}_2 &= 
+    a 2 \mathbf{v}_2 \\
+    \mathbf{C} \mathbf{v}_2  &= 
+    (a -  \lambda_2) \mathbf{v}_2.
+\end{align*}
+
+It follows that $\mathbf{v}_2$ is an eigenvector of $\mathbf{C}$. To minimize $\tilde{J}$, we want maximize
+$\mathbf{v}_2^T \mathbf{C} \mathbf{v}_2$. Thus, we want $\mathbf{v}_2$ to have the eigenvector
+with the biggest possible eigenvalue. Since $\mathbf{v}_1$ already is the eigenvector
+with the biggest eigenvalue, $\mathbf{v}_2$ has to settle for the second largest
+eigenvalue.
+
+\exercise
+\subexercise
+\begin{align*}
+    || \mathbf{x}_i - \sum z_{ik} \mathbf{v}_k || ^ 2 &= 
+    ( \mathbf{x}_i - \sum z_{ik} \mathbf{v}_k ) ^ T ( \mathbf{x}_i - \sum z_{ik} \mathbf{v}_k) \\
+    &= \mathbf{x}_i^T \mathbf{x}_i  - 2\sum z_{ik} \mathbf{x}_i ^ T \mathbf{v}_k
+    + \left( \sum z_{ik} \mathbf{v}_k \right) ^ T
+    \left( \sum z_{ik} \mathbf{v}_k \right) \\
+    &= \mathbf{x}_i^T \mathbf{x}_i
+    - 2\sum z_{ik} \mathbf{x}_i ^ T \mathbf{v}_k
+    + \sum z_{ik} \mathbf{x}_i ^ T \mathbf{v}_k \\
+    &= \mathbf{x}_i^T \mathbf{x}_i
+    - \sum \mathbf{v}_k^T \mathbf{x}_i \mathbf{x}_i ^ T \mathbf{v}_k.
+\end{align*}
+
+\subexercise
+\begin{align*}
+    J_K &= \frac{1}{n} \sum\limits_i^n \left(
+        \mathbf{x}_i^T \mathbf{x}_i -
+        \sum\limits_k^K \mathbf{v}_k^T \mathbf{x}_i \mathbf{x}_i ^ T \mathbf{v}_k
+    \right) \\
+    &= \frac{1}{n} \sum\limits_i^n \left(
+        \mathbf{x}_i^T \mathbf{x}_i
+    \right) 
+    - \frac{1}{n} \sum_k^K \mathbf{v}_k^T \sum\limits_i^n \left( 
+         \mathbf{x}_i \mathbf{x}_i ^ T
+    \right)  \mathbf{v}_k\\
+    &= \sum\limits_i^n \mathbf{x}_i^T \mathbf{x}_i -
+    \sum\limits_k^K \mathbf{v}_k^T \mathbf{C} \mathbf{v}_k \\
+    &= \sum\limits_i^n \mathbf{x}_i^T \mathbf{x}_i -
+    \sum\limits_k^K \lambda_k
+\end{align*}
+
+\subexercise
+Since 
+\begin{align*}
+    J_d  &= \sum\limits_i^n \mathbf{x}_i^T \mathbf{x}_i
+    - \sum\limits_{k=1}^d \lambda_k\mathbf{x}_i^T \mathbf{x}_i \\
+    &= \sum\limits_i^n \mathbf{x}_i^T \mathbf{x}_i
+    - \sum\limits_{k=1}^K \lambda_k\mathbf{x}_i^T \mathbf{x}_i 
+    - \sum\limits_{k=K+1}^d \lambda_k\mathbf{x}_i^T \mathbf{x}_i \\
+    &= J_K - \sum\limits_{k=K+1}^d \lambda_k\mathbf{x}_i^T \mathbf{x}_i \\
+    &= 0,
+\end{align*}
+we have
+\begin{equation*}
+    J_K = \sum\limits_{k=K+1}^d \lambda_k
+\end{equation*}
+
+\exercise
+
+There is a mistake in equation 12.133. $\tilde{\mathbf{C}}$ is a $d \times d$ matrix,
+so the equation should read
+
+\begin{equation*}
+    \tilde{\mathbf{C}} = \frac1n \tilde{\mathbf{X}} \tilde{\mathbf{X}} ^ T
+    = \frac1n \mathbf{X} \mathbf{X} ^ T - \lambda_1 \mathbf{v}_1 \mathbf{v}_1 ^ T
+\end{equation*}
+
+\subexercise
+
+\begin{align*}
+    \tilde{\mathbf{C}} &= \frac1n (
+        \mathbf{I} - \mathbf{v}_1 \mathbf{v}_1^T
+    ) \mathbf{X} \mathbf{X} ^ T (
+        \mathbf{I} - \mathbf{v}_1 \mathbf{v}_1^T
+    ) \\
+    &= \left(
+        \mathbf{C}
+        - 2 \mathbf{v}_1 \mathbf{C} \mathbf{v}_1 ^ T
+        + \mathbf{v}_1 \mathbf{v}_1 ^ T \mathbf{C}
+        \mathbf{v}_1 \mathbf{v}_1 ^ T
+    \right) \\
+    &= \left(
+        \mathbf{C}
+        - 2 \lambda_1 \mathbf{v}_1 \mathbf{v}_1 ^ T
+        + \lambda_1 \mathbf{v}_1 \mathbf{v}_1 ^ T
+        \mathbf{v}_1 \mathbf{v}_1 ^ T
+    \right) \\
+    &= \left(
+        \mathbf{C}
+        - \lambda_1 \mathbf{v}_1 \mathbf{v}_1 ^ T
+    \right)
+\end{align*}
+
+\subexercise
+
+Let $\mathbf{u}$ be any eigenvector of $\mathbf{C}$. Assuming that the largest
+eigenvalue of $\mathbf{C}$ has a multiplicity of 1,
+\begin{align*}
+    \tilde{\mathbf{C}} \mathbf{u} &= \mathbf{C} \mathbf{u}
+    - \lambda \mathbf{v}_1 \mathbf{v}_1^T \mathbf{u} \\
+    &= \lambda_i \mathbf{u} - \lambda_1 \mathbf{v}_1 0
+\end{align*}
+if $i \neq 1$ (i.e. $\mathbf{u} \neq \mathbf{v}_1$ and 
+\begin{align*}
+    \tilde{\mathbf{C}} \mathbf{u} &= \mathbf{C} \mathbf{u}
+    - \lambda \mathbf{v}_1 \mathbf{v}_1^T \mathbf{u} \\
+    &= \lambda_i \mathbf{u} - \lambda_1 \mathbf{v}_1 1 \\
+    &= 0
+\end{align*}
+if $i = 1$ (i.e. $\mathbf{u} = \mathbf{v}_1$. Thus, $\mathbf{C}$ and
+$\tilde{\mathbf{C}}$ have the same eigenvectors with the same eigenvalues, except for
+$\mathbf{v}_1$. It follows that the eigenvector with the largest eigenvalue of
+$\tilde{\mathbf{C}}$ is colinear with the  eigenvector with the second largest
+eigenvalue of $\mathbf{C}$ : $\mathbf{v}_2$. Since both $\mathbf{u}$ and
+$\mathbf{v}_2$ are unit norm, $\mathbf{u} = \pm \mathbf{v}_2$.
+
+\subexercise
+\begin{lstlisting}[language=Python]
+eigenvalues = []
+eigenvectors = []
+for _ in range(K):
+    lmbd, u = f(C)
+    eigenvalues.append(lmbd)
+    eigenvectors.append(u)
+    C = C - lmbd * u @ u.T
+\end{lstlisting}
+where $@$ denotes matrix multiplication.
+
+\end{document}

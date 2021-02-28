@@ -6,6 +6,7 @@
 
 \DeclareMathOperator*{\argmax}{arg\!\max}
 \DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\var}{var}
 \newcounter{exercise}
 \setcounter{exercise}{0}
 \newcounter{subexercise}
@@ -23,6 +24,152 @@
 \section*{Comments and Proofs}
 \subsection*{Section 9.2.2.1}
 Note that in this context, $\mu$ is a parameter of the model,
-not $\sigma(\frac{1}{1+\exp(-\mathbf{w}^T\mathbf{x})})$.
+not $\frac{1}{1+\exp(-\mathbf{w}^T\mathbf{x})}$.
 
+\subsection*{Section 9.3.1}
+Because equation 9.77 looks quite different than equation 9.2, I did not find
+equations 9.81 and 9.82 trivial.
+
+\textit{Proof of equation 9.81.} We first find $A(\theta)$.
+\begin{align*}
+    \int p(y|\theta_i, \sigma^2) &= 1 \\
+    \int \exp\left[
+        \frac{
+            y\theta_i - A(\theta_i)
+        }{
+            \sigma^2
+        }
+        - c(\theta_i, \sigma^2)
+    \right]dy &= 1 \\
+    \exp\left[\frac{-A(\theta_i)}{\sigma^2}\right]
+    \int \exp\left[
+        \frac{y\theta_i}{\sigma^2}-c(\theta_i, \sigma^2)
+    \right]dy
+    &= 1 \\
+    \int \exp\left[
+        \frac{y\theta_i}{\sigma^2}-c(\theta_i, \sigma^2)
+    \right]dy
+    &= \exp\left[\frac{A(\theta_i)}{\sigma^2}\right] \\
+    \sigma^2\log\int \exp\left[
+        \frac{y\theta_i}{\sigma^2}-c(\theta_i, \sigma^2)
+    \right]dy &= A(\theta)
+\end{align*}
+Next, we derive in terms of $\theta$:
+\begin{align*}
+    \frac{\partial A}{\partial \theta_i}
+    &= \frac{\partial}{\partial \theta_i}
+    \sigma^2\log\int \exp\left[
+        \frac{y\theta_i}{\sigma^2}-c(\theta_i, \sigma^2)
+    \right]dy \\
+    &= \sigma^2 \frac{
+        \int \frac{\partial}{\partial\theta}\exp\left[
+            \frac{y\theta_i}{\sigma^2}-c(y_i, \sigma^2)
+        \right]dy
+    }{
+        \int \exp\left[
+            \frac{y\theta_i}{\sigma^2}-c(y_i, \sigma^2)
+        \right]dy
+    } \\
+    &= \sigma^2 \frac{
+        \int \frac{y}{\sigma^2} \exp\left[
+            \frac{y\theta_i}{\sigma^2}-c(y_i, \sigma^2)
+        \right]dy
+    }{
+        \exp(\frac{A(\theta_i)}{\sigma^2})
+    } \\
+    &= \int y p(y|\theta_i, \sigma^2) dy = \mathbb{E}[y|\theta_i, \sigma].
+\end{align*}
+
+\textit{Proof of equation 9.8.2}.
+Using the proof of equation 9.8.1, we have
+\begin{align*}
+    \frac{\partial}{\partial \theta_i}\frac{\partial A}{\partial \theta_i}
+    &= \frac{\partial}{\partial \theta_i}
+    \int y \exp\left[
+        \frac{ y\theta_i - A(\theta_i) }{ \sigma^2 } - c(y_i, \sigma^2)
+    \right]dy \\
+    &= \int y \frac{\partial}{\partial \theta_i} \exp\left[
+        \frac{ y\theta_i - A(\theta_i) }{ \sigma^2 } - c(y_i, \sigma^2)
+    \right]dy \\
+    &= \int y\left(\frac{
+        y-\frac{\partial A}{\partial \theta_i}
+    }{
+        \sigma^2
+    }\right)\exp\left[
+        \frac{ y\theta_i - A(\theta_i) }{ \sigma^2 } - c(y_i, \sigma^2)
+    \right]dy \\
+    &= \frac{1}{\sigma^2} \int
+    \left(
+        y^2 - y\frac{\partial A}{\partial \theta_i}
+    \right)p(y|\theta_i, \sigma^2)dy \\
+    &= \frac{1}{\sigma}\left(
+        \int y^2p(y|\theta_i, \sigma^2)dy
+        - \frac{\partial A}{\partial \theta_i}
+        \int y p(y|\theta_i, \sigma^2)dy
+    \right) \\
+    &= \frac{1}{\sigma^2}\left(
+        \mathbb{E}[y^2|\theta_i, \sigma^2]-\mathbb{E}[y|\theta_i, \sigma^2]^2
+    \right) \\
+    &= \frac{1}{\sigma^2}\var[y|\theta_i, \sigma^2].
+\end{align*}
+It follows that
+\[
+    \var[y|\theta_i, \sigma^2]
+    = \sigma^2\frac{\partial^2A}{\partial\theta_i^2}.
+\]
+\section*{Exercises}
+
+\setcounter{exercise}{1}
+
+\exercise
+\begin{align*}
+    \mathcal{N}(\mathbf{x}|\boldsymbol{\Sigma}, \boldsymbol{\theta}) &  =
+    \frac{1}{
+        (2\pi)^{\frac{D}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}
+    }\exp\left(
+        -\frac{1}{2}
+        (\mathbf{x}-\boldsymbol{\mu})^T
+        \boldsymbol{\Sigma}^{-1}
+        (\mathbf{x}-\boldsymbol{\mu})
+    \right) \\
+    &= \frac{1}{
+        (2\pi)^{\frac{D}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}
+    }\exp\left(
+        -\frac{1}{2} (
+            \mathbf{x}^T\boldsymbol{\Sigma}^{-1}\mathbf{x}
+            - 2\boldsymbol{\mu}^T\boldsymbol{\Sigma}^{-1}\mathbf{x}
+            + \boldsymbol{\mu}^T\boldsymbol{\Sigma}^{-1}\boldsymbol{\mu}
+        )
+    \right) \\
+    &= \frac{1}{
+        (2\pi)^{\frac{D}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}
+    }
+    \exp\left(
+        -\frac{1}{2}\boldsymbol{\mu}^T\boldsymbol{\Sigma}^{-1}\boldsymbol{\mu}
+    \right)
+    \exp\left(
+        -\frac{1}{2}\mathbf{x}^T\boldsymbol{\Sigma}^{-1}\mathbf{x}
+        +\boldsymbol{\mu}^T\boldsymbol{\Sigma}^{-1}\mathbf{x}
+    \right) \\
+    &= \frac{1}{A(\boldsymbol{\Sigma}, \boldsymbol{\mu})}h(\mathbf{x})
+    \exp\left(
+        \boldsymbol{\eta}(\boldsymbol{\Sigma}, \boldsymbol{\mu})^T
+        \boldsymbol{\phi}(\mathbf{x})
+    \right)
+\end{align*}
+Where
+\begin{align*}
+    h(\mathbf{x}) &= 1, \\
+    A\left(\boldsymbol{\Sigma}, \boldsymbol{\mu}\right) &= \frac{1}{
+        (2\pi)^{\frac{D}{2}}|\boldsymbol{\Sigma}|^{\frac{1}{2}}
+    }
+    \exp\left(
+        -\frac{1}{2}\boldsymbol{\mu}^T\boldsymbol{\Sigma}^{-1}\boldsymbol{\mu}
+    \right),
+\end{align*}
+$\boldsymbol{\eta}(\boldsymbol{\Sigma}, \boldsymbol{\mu})$ is $-\frac{1}{2}$
+times a concatenation of the rows (or columns) of
+$\boldsymbol{\Sigma}^{-1}$ and $\boldsymbol{\mu}^T\boldsymbol{\Sigma}$,
+and $\boldsymbol{\phi}(\mathbf{x})$ is a concatenation of
+the rows (or columns) of $\mathbf{x}\mathbf{x}^T$ and $\mathbf{x}$.
 \end{document}
