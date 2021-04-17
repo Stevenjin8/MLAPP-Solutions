@@ -1,0 +1,76 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{enumerate}
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\var}{var}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{
+  \subsection*{Exercise
+    \ifx/#1/\stepcounter{exercise}\arabic{exercise}
+    \else#1\fi
+  }
+  \setcounter{subexercise}{0}
+}
+\newcommand*{\subexercise}[1][]{
+  \par{
+    \noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
+  }
+}
+\title{Chapter 9}
+\author{stevenjin8}
+\date{\today}
+
+\begin{document}
+  \maketitle
+
+  \section*{Comments and Proofs}
+  \setcounter{section}{4}
+  \setcounter{subsection}{3}
+  \subsection{Kernel PCA}
+
+  It took me a while to understand this section. The idea is to leverage the Mercer property of
+  kernels to map the data to a larger (potentially infinite) dimension feature space and to compute
+  the principal components over said feature space. Given that, we first compute the Gram matrix:
+  \begin{align*}
+    \mathbf{K} = \boldsymbol{\Phi}\boldsymbol{\Phi} ^ T \\
+    k_{i,j} = \kappa(\mathbf{x}_i, \mathbf{x}_j)
+  \end{align*}
+  Using the eigenvalue/eigenvector trick presented earlier we find the formula for
+  $\mathbf{V}_{kpca}$. Thus the kpca embedding of a data point $\mathbf{x}_*$ is
+  $\phi(\mathbf{x_*}) \boldsymbol{\Phi}^T \mathbf{U} \boldsymbol{\Lambda} ^ {-\frac12}$ (
+  note that equation 14.40 is missing a transpose).
+
+  I still don't understand algorithm 14.2. Given some new data $\mathbf{X}_*$, the vectorized
+  equation for $\tilde{\mathbf{K}}_*$ should
+  be
+  \begin{align*}
+    \tilde{\mathbf{K}}_* &= (\boldsymbol{\Phi}_* - \frac1N\sum \phi_i) \boldsymbol{\Phi}^T
+    \mathbf{U}_{:, 1: z} \boldsymbol{\Lambda}_{:, 1:z} \\
+    &= (\mathbf{K}_* - \mathbf{1}_{N_*} \overline{\mathbf{k}}^T
+    - \overline{\mathbf{k}}_* \mathbf{1}_N^T
+    + \overline{k} \mathbf{1}_{N_*} \mathbf{1}_{N}^T)
+    \mathbf{U}_{:, 1: z} \boldsymbol{\Lambda}_{:, 1:z}
+  \end{align*}
+  where $\mathbf{K}_* = \boldsymbol{\Phi}_* \Phi^T$ contain the pairwise kernel between the new data
+  and the training data; $\overline{\mathbf{k}}$ is the row-wise mean for $\mathbf{K}$;
+  $\overline{\mathbf{k}}_*$ is the row-wise mean of $\mathbf{K}_*$; and $\overline{k}$ is the
+  mean of all values in $\mathbf{K}$. There is an implementation of this in the notebooks folder.
+
+  Regardless, line 8 of the equation cannot be correct since both $\mathbf{O}_*$ and $\mathbf{K}_*$
+  are $N_* \times N$. Thus, three out of the four terms are not defined.
+
+  Something that I found really interesting is that we do not normalize the columns of
+  $\boldsymbol{\Phi}$. It makes sense, however, the whole idea of KPCA is centered around
+  the kernel function and dimensions in the feature space that have more extreme values
+  are going to have a larger impact on the kernel.
+  \section*{Exercises}
+
+  \exercise
+  \subexercise
+\end{document}

@@ -1,0 +1,189 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{enumerate}
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\var}{var}
+\DeclareMathOperator*{\Ga}{Ga}
+\DeclareMathOperator*{\Lap}{Lap}
+\DeclareMathOperator*{\const}{const}
+\DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\sign}{sign}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{
+  \subsection*{Exercise
+    \ifx/#1/\stepcounter{exercise}\arabic{exercise}
+    \else#1\fi
+  }
+  \setcounter{subexercise}{0}
+}
+\newcommand*{\subexercise}[1][]{
+  \par{\noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}}
+}
+\title{Chapter 13}
+\author{stevenjin8}
+\date{\today}
+
+\begin{document}
+  \maketitle
+
+  \section*{Exercises}
+    \exercise
+    \begin{align*}
+      \frac{\partial }{\partial w_k}
+      ||\mathbf{X} \mathbf{w} - \mathbf{y}||_2^2
+      &= \frac{\partial }{\partial w_k}
+        \sum (\mathbf{x}_i^T \mathbf{w} - y_i) ^ 2 \\
+      &= \sum 2(\mathbf{x}_i^T \mathbf{w} - y_i)x_{ik} \\
+      &= \sum 2(\mathbf{x}_{i,-k}^T \mathbf{w}_{-k} + x_{ik} w_k - y_i) x_{ik} \\
+      &= \sum 2(\mathbf{x}_{i,-k}^T \mathbf{w}_{-k} + x_{ik} w_k - y_i) x_{ik} \\
+      &= 2 \sum (\mathbf{x}_{i,-k}^T \mathbf{w}_{-k} - y_i) x_{ik}
+        - 2 \sum x_{ik} ^ 2 w_k \\
+    \end{align*}.
+    Setting the above equal to 0 yields
+    \begin{align*}
+      \sum (\mathbf{x}_{i,-k}^T \mathbf{w}_{-k} - y_i) x_{ik}
+      - \sum x_{ik} ^ 2 w_k &= 0 \\
+      \mathbf{r}_k^T \mathbf{x}_{:k} - ||\mathbf{x}_{:k}||_2^2 w_k &= 0 \\
+      \hat{w}_k &= \frac{
+        \mathbf{r}_k^T \mathbf{x}_{:k}
+      }{
+        ||\mathbf{x}_{:k}||_2^2
+      } \\
+    \end{align*}
+
+
+  \setcounter{exercise}{4}
+  \exercise
+    I found this question a bit confusing. I think a more straightforward to show that
+    elastic net reduces to lasso is by showing that that the elastic net loss can be
+    rewritten as lasso loss with modified.
+
+    \begin{align*}
+      J(\mathbf{w}) &= ||\mathbf{X} \mathbf{w} - \mathbf{y}||^2_2
+      + \lambda_2||\mathbf{w}||^2_2 + \lambda_1 ||\mathbf{w}||_1 \\ 
+      &= \sum\limits_i^N (\mathbf{x}_i^T \mathbf{w} - y_i)^2
+      + \sum_k^D \left(
+        \sqrt{\lambda_2} \mathbf{e}_k^T \mathbf{w} - 0
+      \right)^2 + \lambda_1||\mathbf{w}||_1. \\
+    \end{align*}
+    "Stacking" the sums gives
+    \begin{align*}
+      J(\mathbf{w}) = 
+      \left|\left|
+        \begin{bmatrix}
+          \mathbf{X} \\ \sqrt{\lambda_2} \mathbf{I}
+        \end{bmatrix} \mathbf{w} - 
+        \begin{bmatrix}
+          \mathbf{y} \\ \mathbf{0}
+        \end{bmatrix}
+      \right|\right|_2^2.
+    \end{align*}
+
+  \exercise
+    \subexercise
+    For linear regression, $\hat{w}_k = \frac{c_k}{a_k}$. For lasso, $\hat{w}_k$ is a piecewise linear
+    function of $c_k$. Finally, for ridge regression, $\hat{w}_k = \frac{c_k}{a_k + 2\lambda_2}$.
+    Thus, the dotted line must be lasso. For both ridge and linear regression, $\hat{w}_k$ is a linear
+    function of $c_k$. But since $\lambda_2 > 0$, the slope for ridge is less steep. Thus, the solid
+    line is linear regression ad the dashed line is ridge regression.
+
+    \subexercise
+    From figure 13.5, $\lambda_1 = 1$.
+
+    \subexercise
+    The slope for the ridge line is $\frac14$, while the slope for the linear regression line is
+    $\frac12$. Using results from part \textbf{a}, $a_k=2$ and $a_k + 2\lambda_2 = 4$. Thus,
+    $\lambda_2 = 1$.
+
+  \setcounter{exercise}{6}
+  \exercise
+  \begin{align*}
+    p(\boldsymbol{\gamma}|\boldsymbol{\alpha}) &= 
+    \prod\limits_{i=1}^D \int\limits_0^1
+      p(\gamma_i|\pi_i)p(\pi_i|\boldsymbol{\alpha}) d \pi_i
+  \end{align*}
+  We can think of the integral as the posterior predictive distribution with no data. Using the
+  results from 3.3.3 and 3.3.4, we find that
+  \begin{align*}
+    p(\gamma_i=1|\boldsymbol{\alpha}) &= \int\limits_0^1
+      p(\gamma_i=1|\pi_i)p(\pi_i|\boldsymbol{\alpha}) d \pi_i \\
+    &= \frac{\alpha_1}{\alpha_1 + \alpha_2}
+ \end{align*}
+ Thus,
+ \begin{align*}
+    p(\boldsymbol{\gamma}|\boldsymbol{\alpha})
+    &= \pi_0 ^ {||\boldsymbol{\gamma}||_0}
+    (1 - \pi_0) ^ {D - ||\boldsymbol{\gamma}||_0}
+ \end{align*}
+ where $\pi_0 = \frac{\alpha_1}{\alpha_1 + \alpha_2}$. So, using a Beta prior is the same as using
+ a fixed $\pi_0$.
+  
+  \exercise
+    Using the first hint,
+    \begin{align*}
+      \mathbb{E}\left[\left.
+        \frac1{\tau^2_j}
+        \right| w_j
+      \right] &= \int \frac1{\tau^2_j} \frac{
+        \mathcal{N}(w_j|0, \tau^2_j)p(\tau^2_j)
+      }{p(w_j)}d\tau^2_j \\
+      &= \frac1{p(w_j)} \int \frac{1}{|w_j|} \frac{|w_j|}{2\tau^2_j} 
+        \mathcal{N}(w_j|0, \tau^2_j)p(\tau^2_j)
+      d\tau^2_j \\
+      &= \frac1{p(w_j)} \frac{1}{|w_j|} \int \frac{d}{d|w_j|} \left[
+        \mathcal{N}(w_j|0, \tau^2_j)
+      \right]p(\tau^2_j)
+      d\tau^2_j \\
+      &= \frac1{p(w_j)} \frac{1}{|w_j|} \frac{d}{d|w_j|} \int 
+        \mathcal{N}(w_j|0, \tau^2_j)
+      p(\tau^2_j)
+      d\tau^2_j \\
+      &= \frac{1}{|w_j|} \frac1{p(w_j)} \frac{d}{d|w_j|} p(w_j) \\
+      &= \frac{1}{|w_j|} \frac{d}{d|w_j|} \log p(w_j) \\
+      &= \frac{\pi'(w_j)}{|w_j|}.
+    \end{align*}
+    We can further reduce this equation since $p(w_j) = Lap\left(w_j|0, \frac1\gamma\right)$. Also
+    note that $p(w_j)$ is an even function which is why we can mess around with the absolute values.
+
+    I found this question interesting for a couple reasons. The arithmetic gymnastics was pretty
+    clever. Another point of interest is the fact that we could have used any prior $p(\tau^2_j)$,
+    not just $p(\tau^2_j) = \Ga(\tau^2_j| 1, \frac{\gamma^2}{2})$.
+
+    \exercise
+    Recall that for probit regression,
+    \begin{equation*}
+      p(y | \mathbf{x}) = \Phi\left(\mathbf{w}^T \mathbf{x}\right) ^ {y} 
+      + \Phi\left(1-\mathbf{w}^T \mathbf{x}\right) ^ {1 - y}.
+    \end{equation*}
+    Thus,
+    \begin{equation*}
+      \ell(\boldsymbol{\theta}) = \sum\left[
+        y_i\log\left(\mathbf{w}^T \mathbf{x}_i\right)
+        + (1-y_i)\log\left(1-\mathbf{w}^T \mathbf{x}\right)_i
+      \right]
+      -\frac12 \mathbf{w}^T \boldsymbol{\Lambda} \mathbf{w} + \const
+    \end{equation*}
+    Since $\tau^2$ is independent of $\mathcal{D}$, we can use equation 13.91 to find that
+    \begin{equation*}
+      \mathbb{E}\left[\frac1{\tau^2}\right] = \frac\gamma{|w_j|}.
+    \end{equation*}
+
+    Using equation 9.95, the gradient is given by
+    \begin{equation*}
+      \mathbf{g} = \sum
+        \mathbf{x}_i\frac{
+          \tilde{y}_i\phi(\mathbf{w}^T \mathbf{x}_i)
+        }{
+          \Phi(\tilde{y}_i \mathbf{w}^T \mathbf{x}_i)
+        }
+        - \gamma\diag(\sign(w_1), \ldots, \sign(w_D)).
+    \end{equation*}
+    And we can optimize with any gradient based method. We can see that the regularization term in
+    the gradient "pulls" $\mathbf{w}$ towards $\mathbf{0}$ with constant force $\gamma$.
+\end{document}
