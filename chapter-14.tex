@@ -72,5 +72,43 @@
   \section*{Exercises}
 
   \exercise
+
   \subexercise
+  The plane that separates $\phi(\mathbf{x}_1)$ and $\phi(\mathbf{x}_2)$ with the largest margin
+  is perpendicular to $\phi(\mathbf{x}_2) - \phi(\mathbf{x}_1)$. So $\mathbf{w} \parallel
+  \phi(\mathbf{x}_2) - \phi(\mathbf{x}_1) = \langle 0, 2, 2 \rangle$.
+
+  \subexercise
+  The value of the margin is $\sqrt{2}$: half of the distance between $\phi(\mathbf{x}_1)$ and
+  $\phi(\mathbf{x}_2)$.
+
+  \subexercise
+  \[\mathbf{w} = \langle 0, \frac12 \frac12 \rangle\]
+
+  \subexercise
+  Plugging in our values, we have
+  \begin{align*}
+    -w_0 &> 1 \\
+    2 + w_0 &> 1.
+  \end{align*}
+  Thus, $w_0 = -1$.
+
+  \subexercise
+  \[f(x) = -1 + \frac{\sqrt{2}}{2}x + \frac12 x^2\]
+
+  \exercise
+  The resulting decision boundary is guaranteed to separate the classes. At a high level, this is
+  a result of the fact that we are regularizing $||\mathbf{w}||$ and not $w_0$.
+
+  By definition, there exists $\mathbf{w}$ and $w_0$ such that
+  \[y_i(\mathbf{w}^T \phi(\mathbf{x}_i) + w_0) > 0\] for all $i$. However, we can scale
+  $\mathbf{w}$ and $w_0$ by any $a > 0$ while preserving the above inequality:
+   \begin{align*}
+    y_i(\mathbf{w}^T \phi(\mathbf{x}_i) + w_0) &> 0 \\
+    ay_i(\mathbf{w}^T \phi(\mathbf{x}_i) + w_0) &> 0 \\
+    y_i((a\mathbf{w})^T \phi(\mathbf{x}_i) + aw_0) &> 0.
+  \end{align*}
+  in other words we can scale $\mathbf{w}$ arbitrarily while having $f$ perfectly classify the
+  data. Thus, the regularization loss is meaningless.
+
 \end{document}
