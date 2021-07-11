@@ -1,0 +1,244 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath} 
+\usepackage{enumerate}
+
+\DeclareMathOperator*{\argmax}{arg\!\max}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\var}{var}
+\DeclareMathOperator*{\tr}{tr}
+\newcounter{exercise}
+\setcounter{exercise}{0}
+\newcounter{subexercise}
+\newcommand*{\exercise}[1][]{
+  \subsection*{Exercise
+    \ifx/#1/\stepcounter{exercise}\arabic{exercise}
+    \else#1\fi
+  }
+  \setcounter{subexercise}{0}
+}
+\newcommand*{\subexercise}[1][]{
+  \par{
+    \noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
+  }
+}
+\title{Chapter 9}
+\author{stevenjin8}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Comments and Proofs}
+\section*{Exercises}
+\exercise
+We first find the E step. The complete data log likelihood is given by
+\begin{align*}
+    Q(\boldsymbol{\theta}, \boldsymbol{\theta}^{old}) &= \mathbb{E}\left[\left.
+    \sum\limits_i\sum\limits_t \log p(\mathbf{y}_{i,t}, \mathbf{z}_{i,t}
+    | \mathbf{u}_{i,t}, \mathbf{z}_{i, t-1}) \right| \mathbf{y}_i
+  \right] \\
+  &= \sum\limits_i\sum\limits_t \mathbb{E}[
+    \log p(\mathbf{y}_{i,t}| \mathbf{z}_{i,t}, \mathbf{u}_{i,t})
+    + \log p(\mathbf{z}_{i,t} | \mathbf{z}_{i, t-1}, \mathbf{u}_{i,t})
+  ] \\
+  &= \sum\limits_i\sum\limits_t \mathbb{E}[
+    \log \mathcal{N}(\mathbf{y}_{i,t}| \mathbf{C}\mathbf{z}_{i,t}+ \mathbf{D}\mathbf{u}_{i,t}, \mathbf{R})
+    + \log p(\mathbf{z}_{i,t} | \mathbf{A}\mathbf{z}_{i, t-1}+ \mathbf{B}\mathbf{u}_{i,t}, \mathbf{Q})
+  ].
+\end{align*}
+  
+For the M step, we can optimize with respect to each parameter. We will do so alphabetically
+\begin{align*}
+\partial Q &= \sum\limits_i\sum\limits_t \mathbb{E}[
+  \partial \log \mathcal{N}(\mathbf{z}_{i,t}
+    | \mathbf{A}\mathbf{z}_{i,t-1}+ \mathbf{B}\mathbf{u}_{i,t}, \mathbf{Q}
+  )
+] \\
+&= \sum\limits_i\sum\limits_t \mathbb{E}\left[
+  -\frac{1}{2} \partial \left(
+    \left(\mathbf{z}_{i,t} - \mathbf{A}\mathbf{z}_{i,t-1}- \mathbf{B}\mathbf{u}_{i,t}\right)^T
+    \mathbf{Q}^{-1}
+    \left(\mathbf{z}_{i,t} - \mathbf{A}\mathbf{z}_{i,t-1}- \mathbf{B}\mathbf{u}_{i,t}\right)
+  \right)
+\right] \\
+&= \sum\limits_i\sum\limits_t \mathbb{E}\left[
+  - \left(\mathbf{z}_{i,t} - \mathbf{A}\mathbf{z}_{i,t-1}- \mathbf{B}\mathbf{u}_{i,t}\right)^T
+  \mathbf{Q}^{-1}
+  \partial \mathbf{A} \mathbf{z}_{i,t-1}
+\right] \\
+&= \sum\limits_i\sum\limits_t \tr\left[
+  \mathbb{E}\left[
+    - \mathbf{z}_{i,t-1}
+    \left(\mathbf{z}_{i,t} - \mathbf{A}\mathbf{z}_{i,t-1}- \mathbf{B}\mathbf{u}_{i,t}\right)^T
+  \right]
+  \mathbf{Q}^{-1}
+  \partial \mathbf{A} 
+\right] \\
+\frac{\partial Q}{\partial \mathbf{A}} &=
+\sum\limits_i\sum\limits_t -\mathbf{Q}^{-1} \mathbb{E}\left[
+  \left(\mathbf{z}_{i,t} - \mathbf{A}\mathbf{z}_{i,t-1}- \mathbf{B}\mathbf{u}_{i,t}\right)
+  \mathbf{z}_{i,t-1}^T
+\right] \\
+\mathbf{0} &= \sum\limits_i\sum\limits_t
+\mathbb{E}\left[\mathbf{z}_{i,t} \mathbf{z}_{i,t-1}^T\right]
+- \mathbf{A}\mathbb{E}\left[\mathbf{z}_{i,t-1}\mathbf{z}_{i,t-1}^T\right]
+- \mathbf{B}\mathbf{u}_{i,t}\mathbb{E}[\mathbf{z}_{i,t-1}^T] \\
+\mathbf{A} &= \left(
+  \sum\limits_i\sum\limits_t
+  \mathbb{E}\left[\mathbf{z}_{i,t} \mathbf{z}_{i,t-1}^T\right]
+  - \mathbf{B}\mathbf{u}_{i,t}\mathbb{E}\left[\mathbf{z}_{i,t-1}^T\right]
+\right)\left(
+  \sum\limits_i\sum\limits_t
+  \mathbb{E}\left[\mathbf{z}_{i,t-1}\mathbf{z}_{i,t-1}^T\right]
+\right)^{-1}
+\end{align*} 
+
+Doing the same thing for $\mathbf{B}$ gives
+\begin{align*}
+\frac{\partial Q}{\partial \mathbf{B}} &= 
+\sum\limits_i\sum\limits_t -\mathbf{Q}^{-1} \mathbb{E}\left[
+  \left(\mathbf{z}_{i,t} - \mathbf{A}\mathbf{z}_{i,t-1}- \mathbf{B}\mathbf{u}_{i,t}\right)
+  \mathbf{u}_{i,t}^T
+\right] \\
+\mathbf{0} &= \sum\limits_i\sum\limits_t 
+\mathbb{E}\left[\mathbf{z}_{i,t} \mathbf{u}_{i,t}\right]
+- \mathbf{A}\mathbb{E}[\mathbf{z}_{i,t-1}] \mathbf{u}_{i,t}^T
+- \mathbf{B}\mathbf{u}_{i,t}\mathbf{u}_{i,t}^T \\
+\mathbf{B} &= \left(
+  \sum\limits_i\sum\limits_t 
+  \mathbb{E}\left[\mathbf{z}_{i,t} \mathbf{u}_{i,t}\right]
+  - \mathbf{A}\mathbb{E}[\mathbf{z}_{i,t-1}] \mathbf{u}_{i,t}^T
+\right) \left(
+  \sum\limits_i\sum\limits_t 
+  \mathbf{u}_{i,t}\mathbf{u}_{i,t}^T
+\right) ^{-1} \\
+\end{align*}
+
+For $\mathbf{C}$ we have,
+\begin{align*}
+\partial Q &= \sum\limits_i\sum\limits_t \mathbb{E}\left[
+  \partial \log \mathcal{N}(\mathbf{y}_{i,t}
+    | \mathbf{C}\mathbf{z}_{i,t}+ \mathbf{D}\mathbf{u}_{i,t}, \mathbf{R}
+  )
+\right] \\
+&= \sum\limits_i\sum\limits_t \tr\left[
+  \mathbb{E}\left[
+    - \mathbf{z}_{i,t}
+    \left(\mathbf{y}_{i,t} - \mathbf{C}\mathbf{z}_{i,t} - \mathbf{D}\mathbf{u}_{i,t}\right)^T
+  \right]
+  \mathbf{R}^{-1}
+  \partial \mathbf{C} 
+\right] \\
+\frac{\partial Q}{\partial \mathbf{C}} &= 
+\sum\limits_i\sum\limits_t -\mathbf{R}^{-1} \mathbb{E}\left[
+  \left(\mathbf{y}_{i,t} - \mathbf{C}\mathbf{z}_{i,t}- \mathbf{D}\mathbf{u}_{i,t}\right)
+  \mathbf{z}_{i,t}^T
+\right] \\
+\mathbf{0} &= 
+\sum\limits_i\sum\limits_t 
+\mathbf{y}_{i,t} \mathbb{E}\left[\mathbf{z}_{i,t}^T\right]
+- \mathbf{C} \mathbb{E}\left[\mathbf{z}_{i,t}\mathbf{z}_{i,t}^T\right]
+- \mathbf{D}\mathbf{u}_{i,t}\mathbb{E}\left[\mathbf{z}_{i,t}^T\right] \\
+\mathbf{C} &= \left(
+\sum\limits_i\sum\limits_t 
+  \mathbf{y}_{i,t} \mathbb{E}\left[\mathbf{z}_{i,t}^T\right]
+  - \mathbf{D}\mathbf{u}_{i,t}\mathbb{E}\left[\mathbf{z}_{i,t}^T\right]
+\right) \left(
+  \sum\limits_i\sum\limits_t 
+  \mathbb{E}\left[\mathbf{z}_{i,t}\mathbf{z}_{i,t}^T\right]
+\right)^{-1}
+\end{align*}
+
+For $\mathbf{D}$, we have
+
+\begin{align*}
+\frac{\partial Q}{\partial \mathbf{D}} &= 
+\sum\limits_i\sum\limits_t -\mathbf{R}^{-1} \mathbb{E}\left[
+  \left(\mathbf{y}_{i,t} - \mathbf{C}\mathbf{z}_{i,t}- \mathbf{D}\mathbf{u}_{i,t}\right)
+  \mathbf{u}_{i,t}^T
+\right] \\
+\mathbf{0} &= 
+\sum\limits_i\sum\limits_t 
+\mathbf{y}_{i,t} \mathbf{u}_{i,t}^T
+- \mathbf{C} \mathbb{E}\left[\mathbf{z}_{i,t}\right]\mathbf{u}_{i,t}
+- \mathbf{D}\mathbf{u}_{i,t}\mathbf{u}_{i,t}^T \\
+\mathbf{D} &= \left(
+  \sum\limits_i\sum\limits_t 
+  \mathbf{y}_{i,t} \mathbf{u}_{i,t}^T
+  - \mathbf{C} \mathbb{E}\left[\mathbf{z}_{i,t}\right] \mathbf{u}_{i,t}
+\right) \left(
+  \sum\limits_i\sum\limits_t 
+  \mathbf{u}_{i,t}\mathbf{u}_{i,t}^T
+\right)^{-1}
+\\
+\end{align*}
+
+The derivation of the covariance matrices $\mathbf{Q}$ and $\mathbf{R}$ is very similar to that of
+the MLE of a multivariate Gaussian. The trick is to differentiate with respect to
+$\mathbf{Q}^{-1}$ and $\mathbf{R}^{-1}$ respectively. Doing so gives us
+\begin{align*}
+  \mathbf{Q} &= \frac{1}{M}\sum\limits_i\sum\limits_t
+  \mathbb{E}\left[
+    \left(\mathbf{z}_{i,t} - \mathbf{Az}_{i,t-1}  - \mathbf{Bu}_{i,t}\right)
+    \left(\mathbf{z}_{i,t} - \mathbf{Az}_{i,t-1}  - \mathbf{Bu}_{i,t}\right)^T
+  \right] \\
+  \mathbf{R} &= \frac{1}{M}\sum\limits_i\sum\limits_t
+  \mathbb{E}\left[
+    \left(\mathbf{y}_{i,t} - \mathbf{Cz}_{i,t}  - \mathbf{Du}_{i,t}\right)
+    \left(\mathbf{y}_{i,t} - \mathbf{Cz}_{i,t}  - \mathbf{Du}_{i,t}\right)^T
+  \right] \\
+\end{align*}
+where $M = \sum N_i$.
+
+For the equations above, we have omitted the base case $p(\mathbf{z}_{i,1}|\mathbf{u}_{i,1})$. We
+consider it now.
+\begin{align*}
+  \partial Q &=\sum\limits_i \partial \mathbb{E} \left[
+  \log \mathcal{N}\left(
+    \mathbf{z}_{i,1} | \boldsymbol{\mu}_{1|0} + \mathbf{Bu}_{i,1}, \boldsymbol{\Sigma}_{1|0}
+  \right)
+\right] \\
+\boldsymbol{\mu}_{1|0} &= \frac{1}{N}\sum\limits_i \mathbb{E}\left[\mathbf{z}_{i,1}\right]
+- \mathbf{Bu}_{i,1} \\
+\boldsymbol{\Sigma}_{1|0} &= \frac{1}{N}\sum\limits_i \mathbb{E}\left[
+  \left(\mathbf{z}_{i,1} - \boldsymbol{\mu}_{1|0} - \mathbf{Bu}_{i,1}\right)
+  \left(\mathbf{z}_{i,1} - \boldsymbol{\mu}_{1|0} - \mathbf{Bu}_{i,1}\right)^T
+\right]
+\end{align*}
+
+Now we must compute the expectations the above formulas depend on:
+\begin{align*}
+\mathbb{E}\left[\mathbf{z}_{i,t}|\mathbf{y}_{i,1:T}, \mathbf{u}_{i,1:T}\right]
+&= \boldsymbol{\mu}_{t|T} \\
+\mathbb{E}\left[
+  \mathbf{z}_{i,t} \mathbf{z}_{i,t}^T
+  |\mathbf{y}_{i,1:T}, \mathbf{u}_{i,1:T}
+\right] &= \boldsymbol{\Sigma}_{t|T} + \boldsymbol{\mu}_{t|T}\boldsymbol{\mu}_{t|T}^T.
+\end{align*}
+To compute the expected value of $\mathbf{z}_{i,t} \mathbf{z}_{i,t+1}$, we first see that
+the distribution is given by
+\begin{align*}
+p(\mathbf{z}_{i,t} \mathbf{z}_{i,t+1}| \mathbf{y}_{i,1:T}, \mathbf{u}_{i,1:T}) &=
+\mathcal{N}(\mathbf{z}_{i,t}, \mathbf{z}_{i,t+1}| \boldsymbol{\mu}, \boldsymbol{\Sigma})\\
+&= p(\mathbf{z}_{i,t+1}|\mathbf{y}_{i,1:T}, \mathbf{u}_{i,1:T})
+p(\mathbf{z}_{i,t}|\mathbf{z}_{i,t+1},\mathbf{y}_{i,1:t}, \mathbf{u}_{i,1:t} )
+\end{align*}
+(see section 18.3.2 for the formulas in terms of the data and parameters) where
+\begin{align*}
+  \boldsymbol{\mu} &= \begin{bmatrix}
+  \boldsymbol{\mu}_1 \\ \boldsymbol{\mu}_2
+\end{bmatrix} \\
+\boldsymbol{\Sigma} &= \begin{bmatrix}
+  \boldsymbol{\Sigma}_{1,1} & \boldsymbol{\Sigma}_{1,2} \\
+  \boldsymbol{\Sigma}_{2,1} & \boldsymbol{\Sigma}_{2,2}
+\end{bmatrix}.
+\end{align*}
+It follows that
+\begin{align*}
+\mathbb{E}\left[
+  \mathbf{x}_{i,t} \mathbf{x}_{i,t+1}^T| \mathbf{y}_{i,1:T}, \mathbf{u}_{i,1:T}
+\right] = \boldsymbol{\Sigma}_{1,2} + \boldsymbol{\mu}_1 \boldsymbol{\mu}_2^T.
+\end{align*}
+\end{document}
