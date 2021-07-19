@@ -7,6 +7,7 @@
 \DeclareMathOperator*{\argmax}{arg\!\max}
 \DeclareMathOperator*{\argmin}{arg\!\min}
 \DeclareMathOperator*{\var}{var}
+\DeclareMathOperator*{\Unif}{Unif}
 \newcounter{exercise}
 \setcounter{exercise}{0}
 \newcounter{subexercise}
@@ -29,8 +30,62 @@
 \begin{document}
   \maketitle
 
-  \section*{Comments and Proofs}
+  \section*{Comments}
+  My clustering experience has been very limited to non-probabilistic methods such as k-means and
+  hierarchical clustering, so I really wanted to get a good understanding of Dirichlet Processes (DP).
+  However I found the notation somewhat confusing. Hopefully if my future self ever sees DP, this
+  little blurb will serve as a good reminder.
+
+  The confusion starts in section 25.2.2 where the author defines a Dirichlet Process as a
+  "distribution over probability measures $G : \Theta \rightarrow \mathbb{R}^+$, where we require
+  $G(\theta) \geq 0$ and $\int_\Theta G(\theta) = 0$." He then goes on to say that $(G(T_1),...,G(T_K))$
+  has a join Dirichlet distribution." This made very little sense to me because $T_i \subseteq \Theta$,
+  not $T_i \in \Theta$. It made even less sense in equation 25.22 in the usage of the Dirac delta,
+  since it is only relevant at one point.
+
+  What really helped me understand was learning what a measure is, and the motivation behind
+  measures in probability theory. Following \cite{prob-measure}, we see that valid probability
+  distributions can be quite clunky to express with pdf's and cdf's. Let $a$ be a random variable
+  with a support of $\{0, 1\}$ and uniform probabilities. Now let $b$ be a random variable such
+  that $b=1$ if  $a=1$, but  $b|a=0 \sim \Unif[0,1]$. The marginal cdf of $b$ has a discontinuity at 1,
+  thus the pdf does not exist. In other words, despite the marginal of $b$ being a valid random
+  variable, its distribution cannot be expressed in terms of a pdf (very cleanly).
+
+  What we really want is an abstract function that gives us a probability for subsets of the support.
+  More formally we want a function $G: \mathcal{A} \rightarrow [0,1]$ such that
+  \begin{enumerate}
+    \item $G(\Theta) = 1$,
+    \item $G(S) + G(T) = G(S \cup T), S \cap T = \emptyset$.
+  \end{enumerate}
+  where $\mathcal{A}$ is an algebra of $\Theta$ (or a $\sigma$-algebra if $\Theta$ is continuous).
+  An algebra of $\Theta$ is a set of sets that contains $\Theta$, and is closed under unions and complements.
+  A $\sigma$-algebra is like an algebra, but it is also closed under countably finite unions (not
+  too sure in what circumstances and algebra would not be a $\sigma$-algebra).
+
+  Applying this to section 25.2.2, I think it would be more appropriate to say that $G$ is a
+  probability measure over $\Theta$. If we let $I$ be the posterior probability measure over 
+  $\Theta$ given some observations $\overline{\theta}_1, ..., \overline{\theta}_N$, with
+  distinct values $\theta_1, ..., \theta_K$, then we can partition $\Theta$ into $K+1$ partitions
+  $\{ \theta_1 \}, ..., \{ \theta_K \}, \Theta \setminus \{ \theta_1, ..., \theta_N \}$.
+  Rewriting equation 25.27, we have
+  \begin{align*}
+    I(\{ \theta_k \}) &= \frac{N_k}{\alpha + N} \\
+    I(\Theta \setminus \{ \theta_1, ..., \theta_K \}) &= \frac{\alpha}{\alpha + N}
+  \end{align*}
+  where $N_k$ is the amount of times $\theta_k$ occurs in our samples.
+
+  The moral of the story is that, unlike pdf's, probability measures allow us to assign non-zero
+  probabilities to sets of measure 0.
+
+  My final note is that in the context of sets, $\delta_x(T) = \mathbb{I}(x \in T)$.
   \section*{Exercises}
   \exercise
   \subexercise
+
+  \begin{thebibliography}{9}
+    \bibitem{prob-measure} 
+    Evans Lawrence.
+    \textit{Mini Lecture \#1 - Why use measure theory for probability?}.
+    \\\texttt{https://www.youtube.com/watch?v=RjPXfUT7Odo}
+  \end{thebibliography}
 \end{document}
