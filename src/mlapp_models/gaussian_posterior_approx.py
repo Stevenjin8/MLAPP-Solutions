@@ -74,7 +74,6 @@ def laplace_approx(mu: np.ndarray, ell: np.ndarray, data: np.ndarray) -> np.ndar
         approximate posterior of the ith elements of `mu` and `ell`.
     """
     n, s2, x_bar = sufficient_statistics(data)
-    sigma = np.exp(ell)
     H = np.array(
         [
             [-n / s2, 0],

@@ -1,10 +1,10 @@
 """Module with adaptive basis functions"""
 from functools import cached_property
 from math import prod
-from typing import Optional, List, Union, Tuple
+from typing import List, Tuple
 
-import numpy as np
 import numba
+import numpy as np
 from tqdm import tqdm
 
 
