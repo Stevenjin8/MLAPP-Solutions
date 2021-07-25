@@ -5,6 +5,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def sigmoid(z: np.ndarray) -> np.ndarray:
+    """Numerically stable sigmoid function"""
+    positives = z > 0
+    negatives = np.logical_not(positives)
+    results = np.zeros_like(z)
+    results[negatives] = np.exp(z[negatives])
+    results[negatives] = results[negatives] / (1 + results[negatives])
+    results[postives] = 1 / (1 + np.exp(-z[positives]))
+    return positives
+
+
 def contour_plot(
     funcs: Iterable[Callable[[np.ndarray], np.ndarray]],
     contour_func: Callable[..., plt.Artist] = plt.contour,

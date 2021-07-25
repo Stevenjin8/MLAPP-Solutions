@@ -1,0 +1,1 @@
+"""Model's from Kevin Murphy's _Machine Learning: A Probabilistic Perspective_."""
