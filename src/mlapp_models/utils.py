@@ -12,8 +12,8 @@ def sigmoid(z: np.ndarray) -> np.ndarray:
     results = np.zeros_like(z)
     results[negatives] = np.exp(z[negatives])
     results[negatives] = results[negatives] / (1 + results[negatives])
-    results[postives] = 1 / (1 + np.exp(-z[positives]))
-    return positives
+    results[positives] = 1 / (1 + np.exp(-z[positives]))
+    return results
 
 
 def contour_plot(

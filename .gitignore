@@ -279,7 +279,7 @@ TSWLatexianTemp*
 .DS_Store
 
 # Python
-**/.ipynb_checkpoints/**
+.ipynb_checkpoints
 **/__pycache__/**
 .python-version
 .venv
