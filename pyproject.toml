@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "mlapp-models"
+version = "0.1.0"
+description = "Implementations of Kevin Murphy's _Machine Learning: A Probabilistic Perspective_"
+authors = ["stevenjin8 <stevenjin8@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.8"
+numpy = "^1.21.1"
+matplotlib = "^3.4.2"
+numba = "^0.53.1"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.9.5"
+black = "^21.7b0"
+isort = "^5.9.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
