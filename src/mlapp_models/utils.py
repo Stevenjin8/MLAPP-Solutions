@@ -16,6 +16,27 @@ def sigmoid(z: np.ndarray) -> np.ndarray:
     return results
 
 
+def pairwise_rbf_kernel(x: np.ndarray, y: np.ndarray, ell: float = 1.0) -> np.ndarray:
+    r"""Vectorized pairwaise rbf kernel.
+
+    Arguments
+    ---------
+    x : np.ndarray
+        1-D array with the first arguments for the kernel.
+    y : np.ndarray
+        1-D array with the second arguments for the kernel. Does not need to have the
+        same size as `x`.
+    ell : float
+        Scale parameter. Equivalent to $\frac1{2\sigma}$.
+
+    Returns
+    -------
+    np.ndarray
+        A `size(x), size(y)` array with the pairwise kernel values.
+    """
+    return np.exp(-(((np.expand_dims(x, axis=1) - y) / ell) ** 2).sum(axis=2))
+
+
 def contour_plot(
     funcs: Iterable[Callable[[np.ndarray], np.ndarray]],
     contour_func: Callable[..., plt.Artist] = plt.contour,

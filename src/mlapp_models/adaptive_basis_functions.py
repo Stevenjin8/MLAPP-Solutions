@@ -7,6 +7,8 @@ import numba
 import numpy as np
 from tqdm import tqdm
 
+from .utils import sigmoid
+
 
 @numba.experimental.jitclass()
 class Stump:
@@ -83,7 +85,7 @@ class AdaBoost:
     """
 
     num_learners: int
-    learners: List[Stump]
+    learners: List
     learner_weights: np.ndarray
 
     def __init__(self, num_learners: int):
@@ -143,8 +145,9 @@ class AdaBoost:
         # normalize weights
         self.learner_weights = self.learner_weights / abs(self.learner_weights).sum()
 
+AdaBoost().learners[0].
 
-# @numba.experimental.jitclass([("v", numba.float64[:, :]), ("w", numba.float64[:, :])])
+# pylint: disable=invalid-name
 class MLPClassifier:
     """Multilayer perceptron binary classifier with one hidden layer."""
 
@@ -162,15 +165,9 @@ class MLPClassifier:
         self.w = np.random.rand(num_hidden, 1) - 0.5
         self.reg = reg
 
-    def activation_function(self, a: np.ndarray) -> np.ndarray:
-        """Numerically stable sigmoid activation function."""
-        positive_idx = a >= 0
-        negative_idx = np.logical_not(positive_idx)
-        output = np.zeros_like(a)
-        output[positive_idx] = 1 / (1 + np.exp(-a[positive_idx]))
-        c = np.exp(a[negative_idx])
-        output[negative_idx] = c / (1 + c)
-        return output
+    def activation_function(self, z: np.ndarray) -> np.ndarray:
+        """Nonlinear activation function"""
+        return sigmoid(z)
 
     def forward(self, X: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """Find the values of the basis functions and probability that y=1 for each
@@ -186,7 +183,7 @@ class MLPClassifier:
         z : np.ndarray
             The values of the basis functions.
         np.ndarray
-            p(y=1 | X)
+            $p(y=1 | X)$
         """
         z = self.activation_function(X @ self.v.T)
         return z, self.activation_function(z @ self.w)
@@ -215,7 +212,7 @@ class MLPClassifier:
         """Number of parameters (excluding biases)."""
         return len(self.w) + prod(self.v.shape) - len(self.v)
 
-    def loss(self, X: np.ndarray, y: np.ndarray, y_hat: np.ndarray) -> float:
+    def loss(self, y: np.ndarray, y_hat: np.ndarray) -> float:
         """Negative log likelyhood functions.
 
         Parameters
@@ -283,6 +280,6 @@ class MLPClassifier:
             self.w -= lr * grad_w
             self.v -= lr * grad_v
 
-            loss = self.loss(X, y, y_hat)
+            loss = self.loss(y, y_hat)
             losses[i] = loss
         return losses
