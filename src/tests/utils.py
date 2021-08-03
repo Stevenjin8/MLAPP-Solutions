@@ -1,10 +1,11 @@
 """Utilities for tests."""
 from typing import Dict, Optional, Tuple
+
 import numpy as np
-from scipy import stats
 from _pytest.recwarn import WarningsChecker
-from sklearn.datasets import make_moons, make_circles, make_blobs
 from mlapp_models.abstract import AbstractModel
+from scipy import stats
+from sklearn.datasets import make_blobs, make_circles, make_moons
 
 
 class AbstractTestCase:
