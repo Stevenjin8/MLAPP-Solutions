@@ -65,6 +65,8 @@ class TestRbf(AbstractTestCase):
 
         x1 = np.full((2, 2), self.finfo.max)
         x2 = np.full((2, 2), self.finfo.min)
-        testing.assert_array_equal(
-            np.zeros((2, 2), dtype=self.float_dtype), pairwise_rbf_kernel(x1, x2)
-        )
+        with pytest.warns(RuntimeWarning) as warninfo:
+            testing.assert_array_equal(
+                np.zeros((2, 2), dtype=self.float_dtype), pairwise_rbf_kernel(x1, x2)
+            )
+        assert "overflow" in warninfo.list[0].message.args[0]

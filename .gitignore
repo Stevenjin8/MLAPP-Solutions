@@ -283,6 +283,9 @@ TSWLatexianTemp*
 __pycache__
 .python-version
 .venv
+.coverage
+.pytest_cache
+htmlcov
 
 # VS Code
 .vscode

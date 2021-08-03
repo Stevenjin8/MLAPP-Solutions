@@ -7,11 +7,12 @@ import numba
 import numpy as np
 from tqdm import tqdm
 
+from .abstract import AbstractModel
 from .utils import sigmoid
 
 
-@numba.experimental.jitclass()
-class Stump:
+# @numba.experimental.jitclass()
+class Stump(AbstractModel):
     """Tree with a depth of 1.
 
     Attributes
@@ -40,7 +41,14 @@ class Stump:
         weights : np.ndarray
             The weight for each data point. Doesn't have to sum to one, but values
             should be positive.
+
+        TODO: Make this work when the labels are all -1.
         """
+        if not len(X) == len(y) == len(weights):
+            raise ValueError("First dimension of arguments must be equal.")
+        if abs(weights).sum() == 0:
+            raise ValueError("Weights must not be all 0.")
+
         best_error = np.inf
         best_indices: Tuple[int, int] = (0, 0)
         for i in range(len(X)):
@@ -53,8 +61,7 @@ class Stump:
                 right_y = y[right_indices]
 
                 error = (
-                    left_weights[left_y != -1].sum()
-                    + right_weights[right_y != -1].sum()
+                    left_weights[left_y != -1].sum() + right_weights[right_y != 1].sum()
                 )
                 error = error / weights.sum()
                 if error < best_error:
@@ -65,13 +72,13 @@ class Stump:
         self.feature = best_indices[1]
 
     def predict(self, X: np.ndarray):
-        """Make predictions using discrimitaiton function."""
+        """Make predictions using discrimination function."""
         preds = np.ones(X.shape[0])
         preds[X[:, self.feature] < self.threshold] = -1
         return preds
 
 
-class AdaBoost:
+class AdaBoost(AbstractModel):
     """Adaptive boost binary classification.
 
     Attributes
@@ -145,10 +152,8 @@ class AdaBoost:
         # normalize weights
         self.learner_weights = self.learner_weights / abs(self.learner_weights).sum()
 
-AdaBoost().learners[0].
 
-# pylint: disable=invalid-name
-class MLPClassifier:
+class MLPClassifier(AbstractModel):
     """Multilayer perceptron binary classifier with one hidden layer."""
 
     num_hidden: int
@@ -160,9 +165,9 @@ class MLPClassifier:
     def __init__(self, input_size: int, num_hidden: int, reg: float = 0.00001):
         """Initialize an instance of the class."""
         self.num_hidden = num_hidden
-        self.input_size = input_size
-        self.v = np.random.rand(num_hidden, input_size) - 0.5
-        self.w = np.random.rand(num_hidden, 1) - 0.5
+        self.input_size = input_size + 1
+        self.v = np.random.rand(self.num_hidden, self.input_size) - 0.5
+        self.w = np.random.rand(self.num_hidden, 1) - 0.5
         self.reg = reg
 
     def activation_function(self, z: np.ndarray) -> np.ndarray:
@@ -185,6 +190,7 @@ class MLPClassifier:
         np.ndarray
             $p(y=1 | X)$
         """
+        X = np.append(X, np.ones((len(X), 1)), axis=1)
         z = self.activation_function(X @ self.v.T)
         return z, self.activation_function(z @ self.w)
 
@@ -260,6 +266,7 @@ class MLPClassifier:
         losses : np.ndarray
             The loss at each epoch.
         """
+        X = np.append(X, np.ones((len(X), 1)), axis=1)
         y = y.reshape(-1, 1)
         lr = lr / len(X)
         losses = np.zeros(epochs)
