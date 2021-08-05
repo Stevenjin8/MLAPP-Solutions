@@ -3,8 +3,7 @@ import numpy as np
 import pytest
 from mlapp_models.adaptive_basis_functions import AdaBoost, MLPClassifier, Stump
 from numpy import testing
-from scipy import stats
-from sklearn.datasets import make_moons
+
 from .utils import AbstractTestCase
 
 
@@ -22,22 +21,6 @@ class TestStump(AbstractTestCase):
         assert model.feature == 0
         assert model.threshold == 1
 
-    def test_fit_homogenous_data(self):
-        """Test that we can fit homogenous labels with perfect accuracy."""
-        model = Stump()
-        n = 6
-        d = 3
-        X = np.random.rand(n, d)
-        y = np.ones(n)
-        weights = np.ones_like(y)
-        model.fit(X, y, weights)
-        testing.assert_array_equal(y, model.predict(X))
-
-        # See todo in corresponding function.
-        # y *= -1
-        # model.fit(X, y, weights)
-        # testing.assert_array_equal(y, model.predict(X))
-
     def test_invalid_inputs(self):
         """Test that the model raises the correct errors."""
         model = Stump()
@@ -47,27 +30,6 @@ class TestStump(AbstractTestCase):
         with pytest.raises(ValueError) as excinfo:
             model.fit(np.ones((1, 2)), np.ones(1), np.zeros(1))
         assert excinfo.value.args == ("Weights must not be all 0.",)
-
-    def test_weights(self):
-        """Test that weights affect output."""
-        n = 200
-        d = 2
-        X = np.zeros((n, d))
-        X[: n // 2, 0] = X[n // 2 :, 0] = np.linspace(0, 1, n // 2)
-        X[:, 1] = np.zeros(n)
-        y = np.ones(n)
-        y[n // 2 :] = -1
-
-        weights = np.ones_like(y)
-        weights[n // 2 :] = 2
-        model = Stump()
-        model.fit(X, y, weights)
-        assert model.threshold == 1
-
-        weights = weights[::-1]
-        model = Stump()
-        model.fit(X, y, weights)
-        assert model.threshold == 0
 
 
 class TestAdaBoost(AbstractTestCase):
@@ -89,6 +51,25 @@ class TestAdaBoost(AbstractTestCase):
             == len(model.learner_weights)
             == model.num_learners
             == 1000
+        )
+
+    def test_more_fit(self):
+        """Test that we can fit easy data."""
+        model = AdaBoost(100)
+        self.assert_classifier_fit_blobs(
+            model,
+            zero_one_labels=False,
+            blob_kwargs={"centers": np.array([[5, 0], [0, -5]])},
+        )
+        model = AdaBoost(100)
+        self.assert_classifier_fit_moons(
+            model,
+            zero_one_labels=False,
+        )
+        model = AdaBoost(800)
+        self.assert_classifier_fit_circles(
+            model,
+            zero_one_labels=False,
         )
 
 

@@ -69,7 +69,6 @@ class DirichletGaussianMixtureSampler:
         # Initialize cluster to a column of ones.
         self.clusters = np.ones((self.n, 1))
         self.burn_in_iter = burn_in_iter
-        self._samples_generated = 0
 
     @property
     def prior_cov(self) -> np.ndarray:
@@ -102,11 +101,6 @@ class DirichletGaussianMixtureSampler:
         """Set these together so we don't have to compute the inverse every time."""
         self._obs_cov = obs_cov
         self._obs_cov_inv = la.inv(obs_cov)
-
-    @property
-    def _burned_in(self):
-        """Check if we have burned in."""
-        return self._samples_generated >= self.burn_in_iter
 
     @property
     def n(self):
@@ -216,7 +210,7 @@ class DirichletGaussianMixtureSampler:
         i : int
             The index to update
         sample : np.ndarray
-            A K+1 length one-hot encoding with the chosen cluster. If the last elemnent
+            A K+1 length one-hot encoding with the chosen cluster. If the last element
             is 1, then a new column will be created in `self.clusters`.
         """
         if sample[-1]:
@@ -229,11 +223,10 @@ class DirichletGaussianMixtureSampler:
 
     def burn_in(self) -> None:
         """Perform a burn-in."""
-        for _ in tqdm.trange(self._samples_generated, self.burn_in_iter):
-            self._sample()
-            self._samples_generated += 1
+        for _ in range(self.burn_in_iter):
+            self.sample()
 
-    def _sample(self) -> np.ndarray:
+    def sample(self) -> np.ndarray:
         """Generate a sample from the posterior cluster assignments using collapsed
         Gibbs sampling. The trick is that we don't have to sample the cluster means,
         because we can integrate it out using the posterior predictive distribution.
@@ -241,7 +234,7 @@ class DirichletGaussianMixtureSampler:
         Returns
         -------
         np.ndarray
-            DxK matrix with one-hot encodings of cluster assingments.
+            DxK matrix with one-hot encodings of cluster assignments.
         """
         indices = np.arange(self.n)  # Shuffle by indices
         np.random.shuffle(indices)
@@ -251,21 +244,5 @@ class DirichletGaussianMixtureSampler:
             cluster_post = self.get_cluster_posterior(x)
             sample = stats.multinomial.rvs(1, cluster_post)
             self.update_clusters(i, sample)
-        # Only add if we haven't burned in.
-        self._samples_generated += not self._burned_in
+
         return self.clusters
-
-    def sample(self):
-        """Wrapper around `_sample` to check that the model has burned in.
-
-        Returns
-        -------
-        np.ndarray
-            DxK matrix with a sample from the posterior.
-        """
-        if not self._burned_in:
-            warnings.warn(
-                "Samples may not be representative as the model has not performed a burn-in.",
-                RuntimeWarning,
-            )
-        return self._sample()

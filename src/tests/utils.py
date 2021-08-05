@@ -46,13 +46,18 @@ class AbstractTestCase:
         y: np.ndarray,
         fit_kwargs: Dict[str, any],
         min_accuracy: float,
+        zero_one_labels: bool,
     ):
         """Assert that a model can fit to some data."""
 
+        if not zero_one_labels:
+            y = y * 2 - 1
         model.fit(X, y, **fit_kwargs)
         preds = model.predict(X)
         accuracy = (preds == y).sum() / len(X)
-        assert accuracy >= min_accuracy
+        assert (
+            accuracy >= min_accuracy
+        ), f"Expected {accuracy} to be greater than {min_accuracy}."
 
     @classmethod
     def assert_classifier_fit_moons(
@@ -61,12 +66,18 @@ class AbstractTestCase:
         moon_kwargs: Optional[Dict[str, any]] = None,
         fit_kwargs: Optional[Dict[str, any]] = None,
         min_accuracy: float = 0.95,
+        zero_one_labels: bool = True,
     ):
         moon_kwargs = moon_kwargs or {"noise": 0.1}
         fit_kwargs = fit_kwargs or {}
         X, y = make_moons(**moon_kwargs)
         cls.assert_classifier_fit(
-            model=model, X=X, y=y, fit_kwargs=fit_kwargs, min_accuracy=min_accuracy
+            model=model,
+            X=X,
+            y=y,
+            fit_kwargs=fit_kwargs,
+            min_accuracy=min_accuracy,
+            zero_one_labels=zero_one_labels,
         )
 
     @classmethod
@@ -76,21 +87,37 @@ class AbstractTestCase:
         circle_kwargs: Optional[Dict[str, any]] = None,
         fit_kwargs: Optional[Dict[str, any]] = None,
         min_accuracy: float = 0.95,
+        zero_one_labels: bool = True,
     ):
         moon_kwargs = circle_kwargs or {"noise": 0.1, "factor": 0.5}
         fit_kwargs = fit_kwargs or {}
         X, y = make_circles(**moon_kwargs)
         cls.assert_classifier_fit(
-            model=model, X=X, y=y, fit_kwargs=fit_kwargs, min_accuracy=min_accuracy
+            model=model,
+            X=X,
+            y=y,
+            fit_kwargs=fit_kwargs,
+            min_accuracy=min_accuracy,
+            zero_one_labels=zero_one_labels,
         )
 
     @classmethod
     def assert_classifier_fit_blobs(
-        cls, model, blob_kwargs=None, fit_kwargs=None, min_accuracy: float = 0.95
+        cls,
+        model,
+        blob_kwargs=None,
+        fit_kwargs=None,
+        min_accuracy: float = 0.95,
+        zero_one_labels: bool = True,
     ):
         blob_kwargs = blob_kwargs or {}
         fit_kwargs = fit_kwargs or {}
         X, y = make_blobs(**blob_kwargs)
         cls.assert_classifier_fit(
-            model=model, X=X, y=y, fit_kwargs=fit_kwargs, min_accuracy=min_accuracy
+            model=model,
+            X=X,
+            y=y,
+            fit_kwargs=fit_kwargs,
+            min_accuracy=min_accuracy,
+            zero_one_labels=zero_one_labels,
         )

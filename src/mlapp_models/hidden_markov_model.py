@@ -52,8 +52,8 @@ class HiddenMarkovModel:
         """
         self.K = K
         self.L = L
-        self._latent_choices = np.arange(K, dtype=np.int)
-        self._visible_choices = np.arange(L, dtype=np.int)
+        self._latent_choices = np.arange(K, dtype=np.int8)
+        self._visible_choices = np.arange(L, dtype=np.int8)
         # Initialize parameters with random values.
         self.Psi = np.random.rand(K, K) if Psi is None else Psi
         self.Psi = self.Psi / self.Psi.sum(axis=1, keepdims=True)
@@ -98,10 +98,10 @@ class HiddenMarkovModel:
 
         Returns
         -------
-        alphas : np.ndarray
+        betas : np.ndarray
             A :math:`K \times N` array with the distribution of the hidden variables
             given data up to time :math:`t`. In other words,
-            :math:`\beta{i,t} = p(x_{t+1:T}|z_t=i)` (eq. 17.53).
+            :math:`\beta_{i,t} = p(x_{t+1:T}|z_t=i)` (eq. 17.53).
         """
         betas = np.ones((self.K, len(x)))
         for i in range(len(x) - 2, -1, -1):  # iterate backwards.
@@ -205,7 +205,7 @@ class HiddenMarkovModel:
         z : np.ndarray
             A 1-D array of length :code:`length`.
         """
-        z = np.zeros((length,), dtype=np.int)  # need the `dtype` argument to index.
+        z = np.zeros((length,), dtype=np.int8)  # need the `dtype` argument to index.
         z[0] = np.random.choice(self._latent_choices, p=self.pi)
         for i in range(1, length):
             z[i] = np.random.choice(self._latent_choices, p=self.Psi[int(z[i - 1])])
@@ -254,7 +254,7 @@ class HiddenMarkovModel:
         trellis[:, 0] = self.pi * self.B[x[0]]
         trellis[:, 0] = trellis[:, 0] / trellis[:, 0].sum()
         # Store the most probable paths.
-        paths = np.ones_like(trellis, dtype=np.int) * self._latent_choices.reshape(
+        paths = np.ones_like(trellis, dtype=np.int8) * self._latent_choices.reshape(
             -1, 1
         )
         for t in range(1, len(x)):

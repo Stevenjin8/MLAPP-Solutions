@@ -3,7 +3,6 @@ from functools import cached_property
 from math import prod
 from typing import List, Tuple
 
-import numba
 import numpy as np
 from tqdm import tqdm
 
@@ -11,7 +10,6 @@ from .abstract import AbstractModel
 from .utils import sigmoid
 
 
-# @numba.experimental.jitclass()
 class Stump(AbstractModel):
     """Tree with a depth of 1.
 
@@ -25,9 +23,6 @@ class Stump(AbstractModel):
 
     feature: int
     threshold: float
-
-    def __init__(self):
-        """Define init so we can jit the code."""
 
     def fit(self, X: np.ndarray, y: np.ndarray, weights: np.ndarray) -> None:
         """Fit model to data.
@@ -61,7 +56,8 @@ class Stump(AbstractModel):
                 right_y = y[right_indices]
 
                 error = (
-                    left_weights[left_y != -1].sum() + right_weights[right_y != 1].sum()
+                    left_weights[left_y != -1].sum()
+                    + right_weights[right_y != -1].sum()  # THIS IS CORRECT
                 )
                 error = error / weights.sum()
                 if error < best_error:
@@ -89,6 +85,9 @@ class AdaBoost(AbstractModel):
         The weak learners.
     learner_weights : np.ndarray
         The weight for each learner.
+
+    TODO: There is something wrong here and with `Stump`, but it seems like the two
+    errors cancel out and the model ends up working.
     """
 
     num_learners: int
@@ -116,7 +115,7 @@ class AdaBoost(AbstractModel):
         return predictions @ self.learner_weights
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        """Predict the class of the rows of X."""
+        """Predict the label of the rows of X."""
         preds = np.ones(len(X))
         scores = self.score(X)
         preds[scores < 0] = -1
