@@ -8,7 +8,6 @@ authors = ["stevenjin8 <stevenjin8@gmail.com>"]
 python = "3.8"
 numpy = "^1.21.1"
 matplotlib = "^3.4.2"
-numba = "^0.53.1"
 pytest = "^6.2.4"
 tqdm = "^4.61.2"
 scipy = "^1.7.0"
