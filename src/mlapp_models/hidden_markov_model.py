@@ -175,9 +175,7 @@ class HiddenMarkovModel:
             # eq. 17.99
             transition_counts = sum(self._xis(x).sum(axis=0) for x in samples)
             # eq. 17.100
-            state_counts = sum(
-                gammas.sum(axis=1) for gammas, x in zip(all_gammas, samples)
-            )
+            state_counts = sum(gammas.sum(axis=1) for gammas in all_gammas)
             # eq. 17.104
             condition_observations = np.zeros((self.L, self.K))
             for i, x in enumerate(samples):

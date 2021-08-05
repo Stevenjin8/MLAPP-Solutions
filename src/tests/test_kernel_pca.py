@@ -1,9 +1,11 @@
 """Tests for kernel PCA."""
 import numpy as np
 import pytest
-from .utils import AbstractTestCase
-from mlapp_models.utils import pairwise_rbf_kernel
 from mlapp_models.kernel_pca import KernelPCA
+from mlapp_models.utils import pairwise_rbf_kernel
+from sklearn import datasets
+
+from .utils import AbstractTestCase
 
 
 class TestKernelPCA(AbstractTestCase):
@@ -13,17 +15,10 @@ class TestKernelPCA(AbstractTestCase):
     def setup_class(cls):
         super().setup_class()
         # Probably not that clean, but this data works really well.
-        cls.n = 200
-        q = 4 * np.random.rand(cls.n // 2, 1) * 2 * np.pi
-        X_1 = np.concatenate((np.sin(q), np.cos(q)), axis=1) * (
-            np.random.normal(scale=0.7, size=(cls.n // 2, 1))
+        cls.n = 800
+        cls.X, cls.y = datasets.make_circles(
+            n_samples=cls.n, factor=0, noise=0.1, shuffle=False
         )
-
-        q = 4 * np.random.rand(cls.n // 2, 1) * 2 * np.pi
-        X_2 = np.concatenate((np.sin(q), np.cos(q)), axis=1) * (
-            6 + np.random.normal(scale=0.7, size=(cls.n // 2, 1))
-        )
-        cls.X = np.append(X_1, X_2, axis=0)
 
     def test_fit(self):
         """Test that we can discrimate the classes with one dimension."""
@@ -32,6 +27,6 @@ class TestKernelPCA(AbstractTestCase):
         assert z.shape == (self.n, 1)
         median = np.median(z)
         results = np.logical_not(
-            np.logical_xor(z[: self.n // 2] < median, z[self.n // 2 :] > median)
+            np.logical_xor(z[self.y == 0] < median, z[self.y == 1] > median)
         )
         assert results.all()

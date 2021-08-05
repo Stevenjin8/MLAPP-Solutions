@@ -1,3 +1,4 @@
+"""Test Bivariate Gibbs sampler."""
 import pytest
 import numpy as np
 from numpy import testing
