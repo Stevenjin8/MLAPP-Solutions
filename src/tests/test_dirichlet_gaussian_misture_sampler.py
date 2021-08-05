@@ -1,8 +1,8 @@
 import numpy as np
-from numpy import testing
 import pytest
-from scipy import stats
 from mlapp_models.dirichlet_gaussian_mixture import DirichletGaussianMixtureSampler
+from numpy import testing
+from scipy import stats
 
 from .utils import AbstractTestCase
 

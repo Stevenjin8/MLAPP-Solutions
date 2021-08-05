@@ -1,8 +1,8 @@
 """Reusable utility functions."""
 from typing import Callable, Iterable, List, Optional
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def sigmoid(z: np.ndarray) -> np.ndarray:

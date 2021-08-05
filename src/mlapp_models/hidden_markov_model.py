@@ -1,7 +1,8 @@
 """Module with Hidden Markov Models (Chapter 17)."""
 from typing import List, Optional
-from tqdm import tqdm
+
 import numpy as np
+from tqdm import tqdm
 
 
 class HiddenMarkovModel:
@@ -248,6 +249,18 @@ class HiddenMarkovModel:
         return samples
 
     def viberti(self, x: np.ndarray) -> np.ndarray:
+        """Find the mode of the posterior.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            The observations.
+
+        Returns
+        -------
+        np.ndarray
+            The mode of the posterior.
+        """
         trellis = np.zeros((self.K, len(x)))
         trellis[:, 0] = self.pi * self.B[x[0]]
         trellis[:, 0] = trellis[:, 0] / trellis[:, 0].sum()

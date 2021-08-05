@@ -1,13 +1,15 @@
 """Tests for Gaussian process models."""
-import pytest
+from math import isclose
+
 import numpy as np
-from numpy import testing
+import pytest
 from mlapp_models.gaussian_process import (
     GaussianProcessClassifier,
     GaussianProcessRegressor,
 )
+from numpy import testing
+
 from .utils import AbstractTestCase
-from math import isclose
 
 
 class TestGaussianProcessRegressor(AbstractTestCase):

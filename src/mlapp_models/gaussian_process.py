@@ -1,6 +1,8 @@
 """Gaussian processes."""
-from typing import Tuple, Optional
+from typing import Optional, Tuple
+
 import numpy as np
+
 from .utils import pairwise_rbf_kernel, sigmoid
 
 

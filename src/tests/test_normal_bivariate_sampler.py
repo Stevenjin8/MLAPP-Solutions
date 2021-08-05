@@ -1,8 +1,9 @@
 """Test Bivariate Gibbs sampler."""
-import pytest
 import numpy as np
-from numpy import testing
+import pytest
 from mlapp_models.normal_bivariate_sampler import NormalBivariateGibbs
+from numpy import testing
+
 from .utils import AbstractTestCase
 
 

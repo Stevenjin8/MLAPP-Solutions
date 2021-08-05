@@ -1,8 +1,8 @@
 """Tests for the utils module."""
 import numpy as np
+import pytest
 from mlapp_models.utils import pairwise_rbf_kernel, sigmoid
 from numpy import testing
-import pytest
 
 from .utils import AbstractTestCase
 

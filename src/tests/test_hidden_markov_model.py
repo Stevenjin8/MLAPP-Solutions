@@ -1,7 +1,8 @@
 import numpy as np
-from numpy import testing
 import pytest
 from mlapp_models.hidden_markov_model import HiddenMarkovModel
+from numpy import testing
+
 from .utils import AbstractTestCase
 
 

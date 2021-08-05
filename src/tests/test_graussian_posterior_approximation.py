@@ -1,10 +1,11 @@
+import numpy as np
+import pytest
 from mlapp_models.gaussian_posterior_approximation import (
+    laplace_approx,
     sufficient_statistics,
     true_log_posterior,
-    laplace_approx,
 )
-import pytest
-import numpy as np
+
 from .utils import AbstractTestCase
 
 
