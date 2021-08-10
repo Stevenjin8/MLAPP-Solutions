@@ -33,7 +33,7 @@ python -m ipykernel install --user --name=mlapp_solutions
 
 ## Testing
 
-Test can be ran with
+Test can be run with
 
 ```bash
 make tests
