@@ -23,12 +23,11 @@
 
 \exercise
 \subexercise
-     Since $x$ and $y$ are independent, we have
+Since $x$ and $y$ are independent, we have
 \[
      p(x,y|\theta)=p(y|x,\boldsymbol{\theta})p(x|\boldsymbol{\theta}).
 \]
-The author gives both $p(y|x,\boldsymbol{\theta})$ and
-$p(x|\boldsymbol{\theta})$.
+The author gives both $p(y|x,\boldsymbol{\theta})$ and $p(x|\boldsymbol{\theta})$.
 Plugging in the given values, we get
 \begin{align}
     p(x=0,y=0|\boldsymbol{\theta}) &= \theta_2(1-\theta_1) \\
@@ -38,7 +37,7 @@ Plugging in the given values, we get
 \end{align}
 
 \subexercise 
-We find the likelihood by plugging in (2) (3) (4) and (5) to the likelihood
+We find the likelihood by plugging in (2) (3) (4) and (5) intto the likelihood
 function:
 \begin{equation}\begin{split}
     p(\mathcal{D}|\hat{\boldsymbol{\theta}}) &=
@@ -52,6 +51,7 @@ The MLE is given by
     &= \argmax_{\boldsymbol{\theta}}
     \theta_1^4\theta_2^4{(1-\theta_1)}^3{(1-\theta_2)}^3.
 \end{split}\end{equation*}
+
 Since
 $p(\mathcal{D}|\boldsymbol{\theta})$ is differentiable with respect to
 $\theta_1$ and $\theta_2$, we can differentiable and set equal to zero to
@@ -68,10 +68,7 @@ Solving for $\theta_1$, we get that $\hat{\theta}_1=\frac{4}{7}$. A
 similar process yields that $\hat{\theta}_2=\frac{4}{7}$. This
 result is not too surprising as $\theta_1$ is how often $x=1$ in the data and
 $\theta_2$ is how often our observer was correct, both of which are
-$\frac{4}{7}$. We do not prove that $\hat{\theta}_1=\hat{\theta}_2=\frac{4}{7}$
-is a global maximum, given the context, it is not to far-fetched
-to assume the only critical point is the global maximum. Plugging
-in the MLE's of $\hat{\theta}_1$ and $\hat{\theta}_2$ into equation (5) gives
+$\frac{4}{7}$. Plugging in the MLE's of $\hat{\theta}_1$ and $\hat{\theta}_2$ into equation (5) gives
 \begin{align*}
     p(\mathcal{D}|\hat{\boldsymbol{\theta}}, M_2) &=
     {\left(\frac{4}{7}\right)}^4
@@ -81,8 +78,7 @@ in the MLE's of $\hat{\theta}_1$ and $\hat{\theta}_2$ into equation (5) gives
     & =\frac{4^8 3^6}{7^{14}}.
 \end{align*}
 
-\subexercise We take a different approach than part \textbf{b.}
-by maximizing the log-likelihood
+\subexercise We take a different approach than part b by maximizing the log-likelihood
 (rather than the likelihood) and by using Lagrange multipliers (rather than
 differentiating and setting equal to zero). To put it in math notation, we
 are trying to maximize
@@ -101,7 +97,7 @@ We first find the critical points by finding $\boldsymbol{\theta}$ such that
     \nabla G(\boldsymbol{\theta}) = \lambda\nabla
     \log p(\mathcal{D}|\boldsymbol{\theta},M_4)
 \]
-for some none-zero $\lambda$.
+for some non-zero $\lambda$.
 Finding the gradients is fairly straightforward, we just differentiate with
 respect to each $\theta_{ij}$:
 \begin{equation*}\begin{split}
@@ -184,8 +180,7 @@ As for the four parameter model, we have:
 \]
 Since $L(M_2) \approx -5.271 > L(M_4) = -\infty$, CV will pick $M_2$. 
 
-\subexercise We can use part \textbf{b.}  and \textbf{c.}
-to answer this question. For model $M_2$,
+\subexercise We can use part b and c to answer this question. For model $M_2$,
 \[
     BIC(M_2, \mathcal{D}) =
     \log\frac{4^83^7}{7^{14}} - \frac{2}{2}\log7 \approx -4.520.
@@ -215,7 +210,7 @@ First, we find the expected $\ell_1$ loss in terms of $\boldsymbol{\theta}$:
     -\int\limits_{-\infty}^{a}y\cdot
     p(y|\mathbf{x})dy - a\cdot P(y>a|\mathbf{x})
     +\int\limits_{a}^{\infty}
-    y\cdot p(y|\mathbf{x})dy \\
+    y\cdot p(y|\mathbf{x})dy, \\
 \end{align*}
 where $a$ is our prediction for the unknown value $y$.
 
@@ -231,7 +226,7 @@ Next, we find the critical points by differentiating with respect to $a$
 Since we also know that $P(a\leq y) + P(a>y) = 1$
 it must be the case that
 \begin{align*}
-     P(a\leq l|y\mathbf{x}) = P(a>y|\mathbf{x}) = \frac{1}{2}.
+     P(a\leq l|\mathbf{x}) = P(a>y|\mathbf{x}) = \frac{1}{2}.
 \end{align*}
 
 

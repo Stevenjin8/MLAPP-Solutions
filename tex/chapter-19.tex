@@ -7,6 +7,7 @@
 \DeclareMathOperator*{\argmax}{arg\!\max}
 \DeclareMathOperator*{\argmin}{arg\!\min}
 \DeclareMathOperator*{\var}{var}
+\DeclareMathOperator*{\nb}{nb}
 \newcounter{exercise}
 \setcounter{exercise}{0}
 \newcounter{subexercise}
@@ -19,82 +20,95 @@
 }
 \newcommand*{\subexercise}[1][]{
   \par{
-    \noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
+    \noindent{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
   }
 }
 \title{Chapter 19}
 \author{stevenjin8}
-\date{\today}
+\date{June 21, 2021}
 
 \begin{document}
-  \maketitle
+	\maketitle
 
-  \section*{Comments and Proofs}
-  I found this chapter a bit tough due to the sudden introduction of the node potential $\phi_t$ in
-  equation 19.24. It really just means that we assign potentials both edges and nodes (unlike what
-  section 19.3 suggests).
-  \section*{Exercises}
-  \exercise
-  \begin{align*}
-    \frac{\partial}{\partial\boldsymbol{\theta}_c} \log Z(\boldsymbol{\theta}) &=
-    \frac{1}{Z(\boldsymbol{\theta})} \frac{\partial}{\partial\boldsymbol{\theta}_c} \left[
-      \sum\limits_\mathbf{y} \exp \left(
-        \boldsymbol{\theta}_c^T
-        \boldsymbol{\phi}_c(\mathbf{y})
-      \right)
-    \right] \\
-   &= \sum\limits_\mathbf{y}
-  \boldsymbol{\phi}_c(\mathbf{y}) \frac{1}{Z(\boldsymbol{\theta})}
-  \exp \left(
-    \boldsymbol{\theta}_c^T
-    \boldsymbol{\phi}_c(\mathbf{y})
-  \right) \\
-  &= \sum\limits_\mathbf{y} \boldsymbol{\phi}_c(\mathbf{y}) p(\mathbf{y}|\boldsymbol{\theta})
-  \end{align*}
+	\section*{Comments}
+	I found this chapter a bit tough due to the sudden introduction of the node potential $\phi_t$ in
+	equation 19.24. It really just means that we assign potentials both edges and nodes (unlike what
+	section 19.3 suggests).
 
-  \setcounter{exercise}{3}
-  The cost of training an MRF is $O(rk(N+c)) = O(r(kN + kc))$. Looking at equation 19.41, we see that
-  that we have to compute each feature for each data point per iteration. However, we only have to
-  compute the marginals once per feature.
+	\section*{Exercises}
+	\exercise
+	\begin{align*}
+		\frac\partial{ \partial\boldsymbol{\theta}_c } \log Z( \boldsymbol{\theta} ) &=
+		\frac1{ Z( \boldsymbol{\theta} )} \frac\partial{ \partial\boldsymbol{\theta}_c } \left[
+			\sum\limits_\mathbf{y} \exp \left(
+				\boldsymbol{\theta}_c^T
+				\boldsymbol{\phi}_c(\mathbf{y})
+			\right)
+		\right] \\
+		&= \sum\limits_\mathbf{y}
+		\boldsymbol{\phi}_c( \mathbf{y} ) \frac1{ Z( \boldsymbol{\theta} )}
+		\exp \left(
+			\boldsymbol{\theta}_c^T
+			\boldsymbol{\phi}_c( \mathbf{y} )
+		\right) \\
+		&= \sum\limits_\mathbf{y}
+		\boldsymbol{\phi}_c( \mathbf{y} ) p( \mathbf{y} | \boldsymbol{\theta} ).
+	\end{align*}
 
-  The cost of training a CRF $O(rNk(1+c)) = O(rNkc)$. The key difference is that the unclamped term
-  is now conditioned on each data point. Thus, we must calculate the marginals $N$ times (assuming
-  that each data point is different). In other words, we must compute marginals for each
-  iteration, data point, and feature.
+	\setcounter{exercise}{3}
+	The cost of training an MRF is $O(rk(N+c)) = O(r(kN + kc))$. Looking at equation 19.41, we see that
+	that we have to compute each feature for each data point per iteration. However, we only have to
+	compute the marginals once per feature.
 
-  \exercise
-  \begin{align*}
-    p(x_i=1|\mathbf{x}_{nb_i}) &=
-    \frac{p(x_i=1, \mathbf{x}_{nb_i}|\boldsymbol{\theta})}{
-      p(x_i=0, \mathbf{x}_{nb_i}|\boldsymbol{\theta})
-      + p(x_i=1, \mathbf{x}_{nb_i}|\boldsymbol{\theta})
-    } \\
-    &= \frac{e^z_i}{1 + e^z_i} \\
-    & = \frac{1}{1 + e^{-z_i}}
-  \end{align*}
-  where
-  \begin{align*}
-    z_i &= p(x_i=1, \mathbf{x}_{nb_i}|\boldsymbol{\theta}) \\
-    &= \frac{1}{Z(\boldsymbol{\theta})}\exp(h_i)\prod\limits_{j \in nb_i}\exp(J_{ij}x_j) \\
-    &= \exp\left(\log Z(\boldsymbol{\theta}) + h_i + \sum\limits_{j\in nb_i} J_{ij}x_j\right)
-  \end{align*}
+	The cost of training a CRF $O(rNk(1+c)) = O(rNkc)$. The key difference is that the unclamped term
+	is now conditioned on each data point. Thus, we must calculate the marginals $N$ times (assuming
+	that each data point is different). In other words, we must compute the marginal for each
+	feature, iteration, and data point.
 
-  If we keep equation 19.125 intact, but switch $x_i \in \{-1, 1\}$, then we have
-  \begin{equation}
-    p(x_i=1|\mathbf{x}_{nb_i}, \boldsymbol{\theta}) = \frac{ z_i^+ }{z_i^- + z_i^+}
-  \end{equation}
-  where $z_i^+$ is the unormalized probability
-  $\tilde{p}(x_i=1|\mathbf{x}_{nb_i}, \boldsymbol{\theta})$ and, similarly,
-  $z_i^- = \tilde{p}(x_i=-1|\mathbf{x}_{nb_i}, \boldsymbol{\theta})$.
-  Since 
-  \begin{align*}
-    z_i^+ &= \exp\left(h_i + \sum\limits_{j\in nb_i} J_{ij}x_j\right) \\
-    z_i^- &= \exp\left(-h_i - \sum\limits_{j\in nb_i} J_{ij}x_j\right), \\
-  \end{align*}
-  we can see that $z_i^- = \frac{1}{z_i^-}$. Plugging back into equation 1, we get
-  \begin{align*}
-    p(x_i=1|\mathbf{x}_{nb_i}, \boldsymbol{\theta}) &= \frac{z_i^+}{z_i^- + z_i^+} \\
-    &= \frac{1}{1 + (z_i^-)^2}.
-  \end{align*}
-
+	\exercise
+	\begin{align*}
+		p ( x_i=1 | \mathbf{x}_{\nb_i} )
+		&= \frac{
+			p( x_i=1, \mathbf{x}_{\nb_i} | \boldsymbol{\theta} )}
+		{
+		  p( x_i=0, \mathbf{x}_{\nb_i} | \boldsymbol{\theta} )
+		  + p( x_i=1, \mathbf{x}_{\nb_i} | \boldsymbol{\theta} )
+		} \\
+		&= \frac{ e^z_i}{ 1 + e^z_i} \\
+		& = \frac1{ 1 + e^{-z_i} },
+	\end{align*}
+	where
+	\begin{align*}
+		z_i &= p( x_i=1, \mathbf{x}_{\nb_i} | \boldsymbol{\theta} ) \\
+		&= \frac1{ Z( \boldsymbol{ \theta } )} \exp( h_i )
+		\prod\limits_{ j \in \nb_i }
+		\exp( J_{ij}x_j ) \\
+		&= \exp\left(
+			\log Z( \boldsymbol{\theta} ) + h_i + \sum\limits_{ j\in \nb_i } J_{ij} x_j
+		\right).
+	\end{align*}
+	If we keep equation 19.125 intact, but switch $x_i \in \{ -1, 1 \}$, then we have
+	\[
+		p( x_i=1 | \mathbf{x}_{\nb_i}, \boldsymbol{\theta} )
+		= \frac{ z_i^+ }{ z_i^- + z_i^+ }
+	\]
+	where $z_i^+$ is the unormalized probability,
+	$\tilde{p}( x_i=1 | \mathbf{x}_{\nb_i}, \boldsymbol{\theta} )$. Similarly,
+	$z_i^- = \tilde{p}( x_i=-1 | \mathbf{x}_{\nb_i}, \boldsymbol{\theta} )$.
+	Since 
+	\begin{align*}
+		z_i^+ &= \exp\left(
+			h_i + \sum\limits_{ j \in \nb_i } J_{ij} x_j
+		\right) \\
+		z_i^- &= \exp\left(
+			-h_i - \sum\limits_{ j \in \nb_i } J_{ij} x_j
+		\right), \\
+	\end{align*}
+	we can see that $z_i^- = \frac1{ z_i^- }$. Plugging this back into equation 1, we get
+	\begin{align*}
+		p( x_i=1 | \mathbf{x}_{\nb_i}, \boldsymbol{\theta} )
+		&= \frac{ z_i^+ }{ z_i^- + z_i^+ } \\
+		&= \frac1{ 1 + (z_i^-)^2 }.
+	\end{align*}
 \end{document}
+

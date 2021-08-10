@@ -26,24 +26,23 @@ In this question we compare the misclassification rate of an arbitrary classifie
 on a random dataset versus the misclassification rate using leave one out cross
 validation (LOOCV).
 
-Since we have a completely random dataset (i.e. $mathbf{x}_i$ does not help
+Since we have a completely random dataset (i.e. $\mathbf{x}_i$ does not help
 us predict $y_i$) and the classes are evenly distributed ($N_1 = N_2$),
 the lowest misclassification rate any classifier could achieve would be
 $0.5$. We do not consider the classifier getting lucky.
 
-Now let us consider the misclassification rate using LOOCV:
-\begin{equation}
-    misclassification = \frac{1}{N}\sum\limits_{i=1}^{N}
-    L(y_i, f_m^{-i}(\mathbf{x}_i))
-\end{equation}
+Now consider the misclassification rate using LOOCV:
+\[
+	\text{misclassification} = \frac1N\sum\limits_{i=1}^{N} L(y_i, f_m^{-i}(\mathbf{x}_i)),
+\]
 where $L$ is a $0-1$ loss and $f_m^{-i}(\mathbf{x}_i)$ is the predicted value
 of $y_i$ given $\mathbf{x}_i$ and $\mathcal{D}_{-i}$. Since the data is random
 the best performing classifer will be the one that always picks the most common
-class in the data.
+label.
 
 Taking a closer look at $\mathcal{D}_{-i}$, if $y_i=1$ then there will be
-$N_1-1$ examples of class $1$ and $N_2$ examples of class $2$ in $\mathcal{D}_i$. Since there
-are more examples of class $2$, the best classifier will be the one that always
+$N_1-1$ examples of label $1$ and $N_2$ examples of label $2$ in $\mathcal{D}_i$. Since there
+are more examples of label $2$, the best classifier will be the one that always
 picks $y=2$ and will misclassify $y_i$. If $y_i=2$ then, by the same logic,
 the best classifier trained on
 $\mathcal{D}_i$ will always predict $y=1$ and will also misclassify $y_i$.
@@ -52,21 +51,21 @@ $\mathbf{x}_i$ (not that knowing $\mathbf{x}_i$ makes a difference) will always 
 wrong, our LOOCV misclassification rate is 0, which is quite far from our 
 earlier $0.5$.
 
-From this exercise we see and extreme example of LOOCV being pessimistic. This
+From this exercise we see an extreme example of LOOCV being pessimistic. This
 pessimism is not surprising. As long as data is quality, the more of it the
 better. Whenever we do some sort of cross validation, we set aside some
 data to evaluate the performance on the model and train the model using the rest
 of the data (in LOOCV the training set has one example).
 It follows that the model trained on on the test
 set will not be as good as the one trained on all the data. Further, since we are
-doing the test-evaluate process on every data point, it is unlikely that the model
-lucks out with an easy test set. It is no surprise then that LOOCV will be
+doing the test-evaluate process on every data point, it is unlikely that the model will
+luck out with an easy test set. It is no surprise then that LOOCV is
 consistently pessimistic.
 
 Another way to view the disparity between the two misclassification rates is with
 the composition of the test set. We want the test set to be representative of
 the data. This usually
-comes in the form of ensuring that the test set has the same class distribution as
+comes in the form of ensuring that the test set has the same label distribution as
 the data. Unfortunately, this is not possible with LOOCV because the test set has
 only element (unless there is only one class but why even bother with a model then).
 When the model relies heavily on the prior distributions of the classes, rather than
@@ -92,12 +91,12 @@ section 5.6.2.2, we have
 \begin{align*}
     \hat{m}_0 & = \frac{1}{N}\sum\limits_{i=0}^{6}Y_i \\
     & = 1527.5
-\end{align*}
+\end{align*},
 and
 \begin{align*}
     \hat{\tau}_0^2 & = \max(0, s^2-\sigma^2) \\
     & = 1754.3
-\end{align*}
+\end{align*},
 where $s^2=2254.3$ is the empirical variance and $\sigma^2
 = 500$.
 
@@ -133,13 +132,7 @@ be closer to $Y_i$ since $Y_i$ would be more representative of the $\theta_1$.
 Finally, $\var[\theta_i|\mathcal{D}, \tau_0^2, m_0]$ would also be smaller
 as $Y_i$ would be more representative of $\theta_i$.
 
-\subsubsection*{Conclusion}
-We use results from chapters 4 and 5 to compute various estimates of the data.
-I found this questions a little out of place as there was a lot of Bayesian stats.
-I think the main point of the exercise comes in sections \textbf{c.} and
-\textbf{d.}. In \textbf{c.} we conclude that credible intervals can be unreliable when
-parameters are fitted to the data. In section \textbf{d.} we see the role that $\sigma^2$
-plays in our estimates. The most interesting one (personally) is the effect of
+The most interesting result (personally) is the effect of
 $\sigma^2$ on our estimate of the prior variance $\tau_0^2$. I initially thought that
 that decreasing $\sigma^2$ would also decrease $\tau_0^2$ because the it would leave less
 room for $\theta_i$ to vary. But the fact is the opposite if we think of the variance in
@@ -200,11 +193,11 @@ This estimate for $\sigma^2$ is unbiased because
     & = \sigma^2
 \end{align*}
 where $X \sim \mathcal{N}(\mu, \sigma^2)$.
-\subsection*{Conclusion}
-We see that the sample variance is an unbiased estimator of the true variance
-when we replace the sample mean with the true mean. Intuitively, the fact that each
-observation affects the sample mean causes the sample variance to be biased. Since
-observations do not change the true mean, replacing the sample mean with the true
-means an unbiased estimation of the true variance.
 
+We see that the sample variance is an unbiased estimator of the true variance
+when we replace the sample mean with the true mean. This is because observation affects the sample
+mean causing, the sample variance to be biased. But because observations do not change the true mean,
+replacing the sample mean with the true mean causes the sample variance to be an unbiased estimator
+of the true variance.
 \end{document}
+

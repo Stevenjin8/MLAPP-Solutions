@@ -19,46 +19,52 @@
 
 \title{Chapter 11}
 \author{stevenjin8}
-\date{\today}
+\date{January 16, 2020}
 
 \begin{document}
 \maketitle
 
 \section*{Comments}
 
-I found that the formulae for the EM algorithms could have been a bit more explicit. More specifically, I did not really understand what $Q$ was until I realized that
+I found that the formulae for the EM algorithms could have been a bit more explicit. More
+specifically, I did not really understand what $Q$ was until I realized that
 \begin{align*}
-    Q(\boldsymbol{\theta}, \boldsymbol{\theta}^{t-1})
-    &= \mathbb{E}[\ell_c(\boldsymbol{\theta})|\mathcal{D}, \boldsymbol{\theta}^{t-1}] \\
-    &= \sum \mathbb{E}[\log p(\mathbf{x}_i, z_i|\boldsymbol{\theta})
-    | \mathbf{x}_i, \boldsymbol{\theta}^{t-1}].
+    Q( \boldsymbol{\theta}, \boldsymbol{\theta}^{t-1} )
+    &= \mathbb{E}[ \ell_c( \boldsymbol{\theta} ) | \mathcal{D}, \boldsymbol{\theta} ^ {t-1} ] \\
+    &= \sum \mathbb{E}[
+		\log p( \mathbf{x}_i, z_i | \boldsymbol{\theta} )
+		| \mathbf{x}_i, \boldsymbol{\theta}^{t-1}
+	].
 \end{align*}
 In the case of mixture models with unknown latent variables, we can further expand to
 \[
-    Q(\boldsymbol{\theta}, \boldsymbol{\theta}^{t-1}) = \sum\limits_{i=1}^N\sum\limits_{k=1}^L
-    \log(p(\mathbf{x}_i, z_i=k| \boldsymbol{\theta}))
-    p(z_i=k|\mathbf{x}_i, \boldsymbol{\theta}^{t-1})
+    Q( \boldsymbol{\theta}, \boldsymbol{\theta} ^ {t-1} ) = \sum\limits_{i=1}^N \sum\limits_{k=1}^L
+    \log( p(\mathbf{x}_i, z_i=k | \boldsymbol{\theta}) )
+    p( z_i=k | \mathbf{x}_i, \boldsymbol{\theta} ^ {t-1} )
 \]
 
 In the case of GMMs, I think a more straightforward derivation of $Q$ is
 \begin{align*}
-    Q(\boldsymbol{\theta}, \mathbf{\theta}^{t-1})
-    &= \mathbb{E}\left[\left.\sum\limits_i\log
-    p(\mathbf{x}_i, z_i| \boldsymbol{\theta})\right|
-    \mathcal{D}, \boldsymbol{\theta}^{t-1}\right] \\
-    &= \sum\limits_i\mathbb{E}\left[\log
-    p(\mathbf{x}_i, z_i| \boldsymbol{\theta})|
-    \mathbf{x}_i, \boldsymbol{\theta}^{t-1}\right] \\
-    &= \sum\limits_i\sum\limits_k \log[p(\mathbf{x}_i, z_i=k | \boldsymbol{\theta})]
-    p(z_i=k|\mathbf{x}_i, \boldsymbol{\theta}^{t-1}) \\
+    Q( \boldsymbol{\theta}, \boldsymbol{\theta} ^ {t-1} )
+    &= \mathbb{E}\left[ \sum\limits_i \log p( \mathbf{x}_i, z_i | \boldsymbol{\theta} )
+		\middle| \mathcal{D}, \boldsymbol{\theta} ^ {t-1}
+	\right] \\
+    &= \sum\limits_i \mathbb{E}\left[
+		\log p( \mathbf{x}_i, z_i | \boldsymbol{\theta} )
+		\middle| \mathbf{x}_i, \boldsymbol{\theta} ^ {t-1}
+	\right] \\
+    &= \sum\limits_i \sum\limits_k \log[ p( \mathbf{x}_i, z_i=k | \boldsymbol{\theta} )]
+    p( z_i=k | \mathbf{x}_i, \boldsymbol{\theta} ^ {t-1} ) \\
     &= \sum\limits_i\sum\limits_k
-    r_{ik}\log[p(\mathbf{x}_i|z_i=k, \boldsymbol{\theta})p(z_i=k|\boldsymbol{\theta})] \\
+    r_{ik} \log[ p( \mathbf{x}_i | z_i=k, \boldsymbol{\theta} ) p( z_i=k | \boldsymbol{\theta} )] \\
     &= \sum\limits_i\sum\limits_k
-    r_{ik}\log[\pi_k p(\mathbf{x}_i|z_i=k, \boldsymbol{\theta}))] \\
-    &= \sum\limits_i\sum\limits_k r_{ik}\log\pi_k + 
-     \sum\limits_i\sum\limits_k \log p(\mathbf{x}_i|z_i=k, \boldsymbol{\theta})).
+    r_{ik} \log[ \pi_k p( \mathbf{x}_i | z_i=k, \boldsymbol{\theta} ))] \\
+    &= \sum\limits_i \sum\limits_k
+	r_{ik} \log\pi_k
+	+ \sum\limits_i \sum\limits_k
+	\log p( \mathbf{x}_i | z_i=k, \boldsymbol{\theta} )).
 \end{align*}
-Note that $r_{ik}$ is with respect to $\boldsymbol{\theta}^{t-1}$ and $\pi_k$ is with respect to
+Note that $r_{ik}$ is with respect to $\boldsymbol{\theta} ^ {t-1}$ and $\pi_k$ is with respect to
 $\boldsymbol{\theta}$.
 
 
@@ -67,108 +73,98 @@ $\boldsymbol{\theta}$.
 
 \exercise
 
-Recall that with $D=1$, equation 11.61 is
-\begin{equation}
-    \mathcal{T} \left(
-        x_i | \mu, \sigma^2, \upsilon
-    \right) = \int\limits_{0}^{\infty}\mathcal{N} \left(
-    x_i \mid \mu, \sigma^2/z
-    \right) \Ga\left(
-        z | \frac{\upsilon}{2}, \frac{\upsilon}{2}
-    \right)dz
+Recall that with $D = 1$, equation 11.61 is
+\[
+    \mathcal{T} \left( x_i | \mu, \sigma^2, \upsilon \right)
+	= \int\limits_{0}^{\infty} \mathcal{N} \left(
+		x_i \mid \mu, \sigma ^ 2 / z
+    \right) \Ga\left( z | \frac\upsilon2, \frac\upsilon2 \right) dz
     \tag{11.61'}
-\end{equation}    
-and we have to show that this is equivalent to
-\begin{equation}
-    \mathcal{T} \left(
-        x_i | \mu, \sigma^2, \upsilon
-    \right) = 
-    \frac{\Gamma((\upsilon + 1)/2)}
-    {\Gamma(\upsilon/2)\sqrt{\upsilon\pi}\sigma}
-    \left[
-        1 + \frac{1}{\upsilon}\left(\frac{x_i-\mu}{\sigma}\right)^2
-    \right] ^ {-\left(\frac{\upsilon+1}{2}\right)}.
+\]
+We have to show that this is equivalent to
+\[
+    \mathcal{T} \left( x_i | \mu, \sigma^2, \upsilon \right)
+	= \frac{ \Gamma(( \upsilon + 1 ) / 2 ) }{
+		\Gamma( \upsilon / 2 ) \sqrt{ \upsilon\pi } \sigma
+	} \left[
+        1 + \frac1\upsilon \left( \frac{ x_i - \mu }\sigma \right) ^ 2
+    \right] ^ { -\frac{ \upsilon+1 }2 }.
     \tag{2.71'}
-\end{equation}
+\]
 
 Recall that the pdf of the gamma distribution is
 
-\begin{equation}
-    \Ga(T|a,b)=\frac{b^a}{\Gamma(a)}T^{a-1}e^{-Tb}.
-\end{equation}
+\[
+    \Ga( T | a, b ) = \frac{ b ^ a }{ \Gamma( a )} T ^ { a - 1 } e ^ { -Tb },
+\]
 
 and the gamma function is
 
-\begin{equation}
-    \Gamma(u)=\int \limits_{0}^{\infty}
-    x^{u-1}e^{-x}dx
-\end{equation}
+\[
+    \Gamma( u ) = \int\limits_0^\infty x ^ { u - 1 } e ^ { -x } dx.
+\]
 
 With that out of the way, we first expand equation 11.61':
 
 \begin{align*}
-    & \frac{1}{\sigma\sqrt{2\pi}\Gamma(\upsilon/2)}
-    \left(\frac{v}{2}\right)^{\frac{\upsilon}{2}}
-    \int\sqrt{z}\exp\left[
-        \frac{-z}{2}\left(\frac{x-\mu}{\sigma}\right)^2
+    & \frac1{ \sigma \sqrt{ 2 \pi } \Gamma ( \upsilon / 2) }
+	\left( \frac{ v }2 \right) ^ { \frac\upsilon2 }
+    \int \sqrt{ z } \exp\left[
+        \frac{ -z }2 \left( \frac{ x - \mu }\sigma \right) ^ 2
     \right]
-    \exp\left[\frac{\upsilon-1}{2}\right]z^\frac{v-2}{2}
-    dz \\
-    &= \frac{1}{\sigma\sqrt{2\pi}\Gamma(\upsilon/2)}
-    \left(\frac{v}{2}\right)^{\frac{\upsilon}{2}}
-    \int\exp\left[
-        \frac{-z}{2} \left(
-            \left(\frac{x-\mu}{\sigma}\right)^2
-            + \upsilon
+    \exp\left[ \frac{ \upsilon - 1 }2 \right] z ^ \frac{ v - 2 }2 dz \\
+    &= \frac1{ \sigma \sqrt{ 2 \ pi } \Gamma( \upsilon / 2 )}
+	\left( \frac{ v }2 \right) ^ { \frac\upsilon2 }
+    \int \exp\left[
+        \frac{ -z }2 \left(
+            \left( \frac{ x - \mu }\sigma \right) ^ 2 + \upsilon
         \right)
     \right]
-    z^\frac{\upsilon-1}{2}
-    dz.
+	z ^ \frac{ \upsilon - 1 }2 dz.
 \end{align*}
 
-Performing a $u$-substitution with $u = z\gamma$ where
+Performing a $u$-substitution with $u = z \gamma$ where
 
 \begin{equation*}
-    \gamma = \frac{1}{2} \left(
-            \left(\frac{x-\mu}{\sigma}\right)^2 + \upsilon
-        \right)
+    \gamma = \frac12 \left(
+		\left( \frac{ x - \mu }\sigma \right) ^ 2 + \upsilon
+	\right)
 \end{equation*}
 gives
 \begin{align*}
-     & \frac{1}{\sigma\sqrt{2\pi}\Gamma(\upsilon/2)}
-    \left(\frac{v}{2}\right)^{\frac{\upsilon}{2}}
-    \int e^{-u}u^\frac{\upsilon-1}{2}
-    \gamma^{-\left(\frac{\upsilon+1}{2}\right)}
-    du.
+     & \frac1{ \sigma \sqrt{ 2 \pi } \Gamma( \upsilon / 2 ) }
+    \left( \frac{ v }2 \right) ^ { \frac\upsilon2 } 
+    \int e ^ { -u } u ^ \frac{ \upsilon - 1 }2
+    \gamma^{ -\left( \frac{ \upsilon + 1 }2 \right) }du.
 \end{align*}
 
 Using the pdf of the gamma distribution, we have
 
 \begin{align*}
     & \frac{
-        \Gamma(\frac{\upsilon-1}{2})
-    }{\sigma\sqrt{2\pi}\Gamma(\upsilon/2)}
-    \left(\frac{v}{2}\right)^{\frac{\upsilon}{2}}
-    \gamma^{-\left(\frac{\upsilon+1}{2}\right)}
-    \\
+        \Gamma( \frac{ \upsilon - 1 }2 )
+    }{
+		\sigma \sqrt{ 2 \ pi } \Gamma( \upsilon / 2 )
+	} \left( \frac{ v }2 \right) ^ \frac\upsilon2
+    \gamma ^ { -\frac{ \upsilon + 1 }2 } \\
     &= \frac{
-        \Gamma(\frac{\upsilon-1}{2})
-    }{\sigma\sqrt{\upsilon\pi}\Gamma(\upsilon/2)}
-    \left(\frac{v}{2}\right)^{\frac{\upsilon+1}{2}}
-    \left(\frac{1}{2}
-        \left(
-            \frac{x-\mu}{\sigma}\right)^2 + 
-            \frac{\upsilon}{2}
-        \right)
-    ^{-\left(\frac{\upsilon+1}{2}\right)}\\
+        \Gamma( \frac{ \upsilon - 1 }2 )
+    }{
+		\sigma \sqrt{ \upsilon \pi } \Gamma( \upsilon / 2 )
+	} \left( \frac{ v }2 \right) ^ \frac{ \upsilon + 1 }2
+    \left(
+		\frac12 \left( \frac{ x-\mu }\sigma \right) ^ 2
+		+ \frac\upsilon2
+	\right) ^ { -\left( \frac{ \upsilon+1 }2 \right) }\\
     &= \frac{
-        \Gamma(\frac{\upsilon-1}{2})
-    }{\sigma\sqrt{\upsilon\pi}\Gamma(\upsilon/2)}
-    \left(1+\frac{1}{\upsilon}
-        \left(
-            \frac{x-\mu}{\sigma}\right)^2
-        \right)
-    ^{-\left(\frac{\upsilon+1}{2}\right)}.
+        \Gamma( \frac{ \upsilon - 1 }2 )
+    }{
+		\sigma \sqrt{ \upsilon \pi } \Gamma( \upsilon / 2 )
+	}
+    \left(
+		1
+		+ \frac1\upsilon \left( \frac{ x - \mu }\sigma \right) ^ 2
+	\right) ^ { -\frac{ \upsilon + 1 }2 }.
 \end{align*}
 
 
@@ -177,49 +173,52 @@ Using the pdf of the gamma distribution, we have
 \subexercise
 We have
 \begin{align*}
-    \frac{\partial \ell}{\partial \boldsymbol{\mu}_k} & = 
-    \frac{\partial}{\partial \boldsymbol{\mu}_k}
+    \frac{ \partial \ell }{ \partial \boldsymbol{\mu}_k }
+	&= \frac\partial{ \partial \boldsymbol{\mu}_k }
     \sum\limits_{i=1}^{N} \log \sum \limits_{j=1}^{K}
-    \pi_j\mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_j, \boldsymbol{\Sigma_j}) \\
+    \pi_j \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_j, \boldsymbol{\Sigma_j} )\\
     &= \sum\limits_{i} \frac{
-        \pi_k\mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma_k})
-        \boldsymbol{\Sigma}_k^{-1}(\mathbf{x}_i - \boldsymbol{\mu}_k)
+        \pi_k \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma_k} )
+        \boldsymbol{\Sigma}_k ^ { -1 } ( \mathbf{x}_i - \boldsymbol{\mu}_k )
     }{
-        p(\mathbf{x}_i| \boldsymbol{\theta}) 
+        p( \mathbf{x}_i | \boldsymbol{\theta} ) 
     } \\
-    &= \sum\limits_i r_{ik}\boldsymbol{\Sigma}_k^{-1}(\mathbf{x}_i - \boldsymbol{\mu}_k).
+    &= \sum\limits_i r_{ik} \boldsymbol{\Sigma}_k ^ { -1 } ( \mathbf{x}_i - \boldsymbol{\mu}_k ).
 \end{align*}
 
 \subexercise
 We have
 \begin{align*}
-    \frac{\partial \ell}{\partial \pi_k} & = 
-    \frac{\partial}{\partial \pi_k}
+    \frac{ \partial \ell }{ \partial \pi_k }
+	&= \frac\partial{ \partial \pi_k }
     \sum\limits_{i=1}^{N} \log \sum \limits_{j=1}^{K}
-    \pi_j\mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_j, \boldsymbol{\Sigma_j}) \\
-    &= \sum\limits_i\frac{
-        \mathcal{N}(\mathbf{x}_i|\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)
+    \pi_j \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_j, \boldsymbol{\Sigma_j} ) \\
+    &= \sum\limits_i\ frac{
+        \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k )
     }{
-        p(\mathbf{x}_i|\mathbf{\theta})
+        p( \mathbf{x}_i | \mathbf{\theta} )
     }.
 \end{align*}
 
 \subexercise
 Using the results from part (b), we have
 \begin{align*}
-    \frac{\partial\ell}{\partial w_k} &=
-    \sum\limits_{j=1}^K \frac{\partial\ell}{\partial\pi_j}
-    \frac{\partial \pi_j}{\partial w_k} \\
-    &= \sum\limits_i\frac{\pi_k}{p(\mathbf{x}_i, \boldsymbol{\theta})} \left(
-        -\sum\limits_{j=1}^K[\pi_j \mathcal{N}(
-            \mathbf{x}_i|\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j
-        )] + \mathcal{N}(
-            \mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k
+    \frac{ \partial \ell }{ \partial w_k }
+	&= \sum\limits_{j=1}^K \frac{ \partial \ell }{ \partial \pi_j }
+    \frac{ \partial \pi_j }{ \partial w_k } \\
+    &= \sum\limits_i\
+	frac{ \pi_k }{ p(\mathbf{x}_i, \boldsymbol{\theta}) } \left(
+        -\sum\limits_{j=1}^K [
+			\pi_j \mathcal{N}(
+				\mathbf{x}_i | \boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j
+        )]
+		+ \mathcal{N}(
+            \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k
         )
     \right) \\
-    &=  \sum\limits_i\frac{\pi_k}{p(\mathbf{x}_i, \boldsymbol{\theta})} \left(
-        -p(\mathbf{x}_i| \boldsymbol{\theta}) +  \mathcal{N}(
-            \mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k
+    &= \sum\limits_i \frac{ \pi_k }{ p( \mathbf{x}_i, \boldsymbol{\theta} )} \left(
+        -p( \mathbf{x}_i | \boldsymbol{\theta} ) + \mathcal{N}(
+            \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k
         )
     \right) \\
     &= \sum\limits_i r_{ik} - \pi_k
@@ -227,91 +226,91 @@ Using the results from part (b), we have
 
 \subexercise
 
-Recall that $\left.\frac{\partial f}{\partial \mathbf{A}}\right\rvert_\mathbf{A}$
+Recall that $\left.\frac{ \partial f }{ \partial \mathbf{A} }\right\rvert_\mathbf{A}$
 is a matrix such that
-
 \[
-    f(\mathbf{A} + \partial \mathbf{A}) \approx
-    f(\mathbf{A}) +
-    \Tr\left(\frac{\partial f}{\partial \mathbf{A}}^T\partial \mathbf{A}\right).
+    f( \mathbf{A} + \partial \mathbf{A} )
+	\approx f(\mathbf{A}) + \Tr\left(
+		\frac{ \partial f }{ \partial \mathbf{A} } ^ T \partial\mathbf{A}
+	\right).
 \]
 Here, the trace can be thought of as a matrix "dot product."
 
 We can rewrite the question as
 \begin{align*}
-    \frac{\partial \ell}{\partial \mathbf{\Sigma}_k}
+    \frac{ \partial \ell }{ \partial \boldsymbol{\Sigma}_k }
     &= \sum\limits_{i=1}^{N}
-    \frac{\pi_k}{p(\mathbf{x}_i)}\frac{\partial}{\partial \Sigma_k}
-    \mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \\
-    &= \sum\limits_{i=1}^{N}
-    \frac{
-        \pi_k\mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)
+    \frac{ \pi_k }{ p( \mathbf{x}_i )} \frac\partial{ \partial \Sigma_k }
+    \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k ) \\
+    &= \sum\limits_{i=1}^{N} \frac{
+        \pi_k \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k )
     }{
-        p(\mathbf{x}_i| \mathbf{\theta})
+        p( \mathbf{x}_i | \mathbf{\theta} )
     }
-    \frac{1}{\mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}
-    \frac{\partial}{\partial \boldsymbol{\Sigma}_k}
-    \mathcal{N}(\mathbf{x}_i| \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \\
-    &= \sum\limits_{i=1}^{N}r_{ik}\frac{\partial}{\partial\boldsymbol{\Sigma}_k}
-    \log \mathcal{N}(\mathbf{x}_i|\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \\
-    &= \sum\limits_{i=1}^{N}r_{ik}
-    \frac{\partial}{\partial\boldsymbol{\Sigma}_k} \left[
-        -\frac{D}{2}\log(2\pi) - \frac{1}{2}\log\det{\boldsymbol{\Sigma}_k}
-        - \frac{1}{2}(\mathbf{x}_i-\boldsymbol{\mu}_k)^T
-        \boldsymbol{\Sigma}^{-1}_k
-        (\mathbf{x}_i-\boldsymbol{\mu}_k)
+    \frac1{ \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) }
+    \frac\partial{ \partial \boldsymbol{\Sigma}_k }
+    \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k ) \\
+    &= \sum\limits_{i=1}^{N} r_{ik} \frac\partial{ \partial \boldsymbol{\Sigma}_k }
+    \log \mathcal{N}( \mathbf{x}_i | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k ) \\
+    &= \sum\limits_{i=1}^{N}
+	r_{ik} \frac\partial{ \partial \boldsymbol{\Sigma}_k } \left[
+        - \frac{ D }2 \log( 2 \ pi )
+		- \frac12 \log \det \boldsymbol{\Sigma}_k
+        - \frac12 ( \mathbf{x}_i - \boldsymbol{\mu}_k ) ^ T
+        \boldsymbol{\Sigma}^{-1}_k ( \mathbf{x}_i - \boldsymbol{\mu}_k )
     \right].
 \end{align*}
 Using the fact that
 \[
-    \partial\log\det\boldsymbol{A}
-    = \Tr(\boldsymbol{A}^{-T}\partial\mathbf{A}),
+    \partial \log \det \mathbf{A} = \Tr( \mathbf{A}^{-T} \partial \mathbf{A} ),
 \]
 \[
-    \partial(\mathbf{A}^{-1}) =
-    -\mathbf{A}^{-1}\partial\mathbf{A}\mathbf{A}^{-1}
+    \partial( \mathbf{A}^{-1} ) = -\mathbf{A}^{-1} \partial\mathbf{A} \mathbf{A}^{-1},
 \]
 and
 \[
-    \partial (\mathbf{x}^T\mathbf{A}\mathbf{x}) =
-    \Tr(\mathbf{x}\mathbf{x}^T\partial\mathbf{A})
+    \partial( \mathbf{x}^T \mathbf{A} \mathbf{x} )
+	= \Tr( \mathbf{x} \mathbf{x}^T \partial\mathbf{A} ),
 \]
 we have
 \begin{align*} 
-    \frac{\partial}{\partial\boldsymbol{\Sigma}_k}
-    \log\det\boldsymbol\Sigma_k =
-    \boldsymbol{\Sigma}_k^{-1}
+    \frac\partial{ \partial\boldsymbol{\Sigma}_k }
+    \log \det \boldsymbol\Sigma_k =
+    \boldsymbol{\Sigma}_k^{-1},
 \end{align*}
 and
 \begin{align*}
-    \partial\left[(\mathbf{x}_i-\boldsymbol{\mu}_k)^T
+    \partial\left[
+		( \mathbf{x}_i - \boldsymbol{\mu}_k )^T
         \boldsymbol{\Sigma}^{-1}_k
-    (\mathbf{x}_i-\boldsymbol{\mu}_k)\right] &=
-    \Tr\left[(\mathbf{x}_i-\boldsymbol{\mu}_k)(\mathbf{x}_i-\boldsymbol{\mu}_k)^T
-    \partial(\boldsymbol{\Sigma}^{-1}_k)\right] \\
+		(\mathbf{x}_i - \boldsymbol{\mu}_k)
+	\right] &= \Tr\left[
+		( \mathbf{x}_i - \boldsymbol{\mu}_k )( \mathbf{x}_i - \boldsymbol{\mu}_k )^T
+		\partial( \boldsymbol{\Sigma}^{-1}_k )
+	\right] \\
     &= -\Tr\left[
-        (\mathbf{x}_i-\boldsymbol{\mu}_k)(\mathbf{x}_i-\boldsymbol{\mu}_k)^T
+        ( \mathbf{x}_i - \boldsymbol{\mu}_k )( \mathbf{x}_i - \boldsymbol{\mu}_k )^T
         \boldsymbol{\Sigma}^{-1}_k
         \partial\boldsymbol{\Sigma}_k
         \boldsymbol{\Sigma}^{-1}_k
     \right] \\
     & =  -\Tr\left[
         \boldsymbol{\Sigma}^{-1}_k
-        (\mathbf{x}_i-\boldsymbol{\mu}_k)(\mathbf{x}_i-\boldsymbol{\mu}_k)^T
+        ( \mathbf{x}_i - \boldsymbol{\mu}_k )( \mathbf{x}_i - \boldsymbol{\mu}_k )^T
         \boldsymbol{\Sigma}^{-1}_k
         \partial\boldsymbol{\Sigma}_k
     \right].
 \end{align*}
 Giving us our result:
 \[
-    \frac{\partial\ell}{\partial\boldsymbol{\Sigma}_k} =
+    \frac{ \partial\ell }{ \partial\boldsymbol{\Sigma}_k } =
     \sum\limits_{i=1}^{N}
-    r_{ik} (
+    r_{ik} \left(
         -\frac12 \boldsymbol\Sigma_k^{-1}
         -\frac12 \boldsymbol{\Sigma}^{-1}_k
-            (\mathbf{x}_i-\boldsymbol{\mu}_k)(\mathbf{x}_i-\boldsymbol{\mu}_k)^T
-            \boldsymbol{\Sigma}^{-1}_k.
-    )
+		( \mathbf{x}_i - \boldsymbol{\mu}_k )( \mathbf{x}_i - \boldsymbol{\mu}_k )^T
+		\boldsymbol{\Sigma}^{-1}_k
+    \right).
 \]
 Recall that $\boldsymbol\Sigma_k$ and $\boldsymbol\Sigma_k^{-1}$ are symmetric.
 
@@ -322,180 +321,176 @@ $\mathbf{a}_{ik} = \mathbf{x}_i - \boldsymbol{\mu}_k$.
 Using the results from part e, and the fact that
 
 \[
-    \partial (\mathbf{A}^T\mathbf{A}) = \partial \mathbf{A}^T \mathbf{A} +
-    \mathbf{A}^T \partial\mathbf{A},
+    \partial( \mathbf{A}^T \mathbf{A} )
+	= \partial\mathbf{A}^T \mathbf{A} + \mathbf{A}^T \partial\mathbf{A},
 \]
 we have
 \begin{align*}
-    \partial\left[(\mathbf{a}_{ik})^T
-        \boldsymbol{\Sigma}^{-1}_k
-    (\mathbf{a}_{ik})\right] &=
-    \Tr(
-        \boldsymbol{\Sigma}^{-1}_k\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
+    \partial\left[
+		( \mathbf{a}_{ik} )^T
+		\boldsymbol{\Sigma}^{-1}_k
+		( \mathbf{a}_{ik} )
+	\right]
+	&= \Tr(
+        \boldsymbol{\Sigma}^{-1}_k \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
         \partial \boldsymbol{\Sigma}_k
     ) \\
     &= \Tr(
-        \boldsymbol{\Sigma}^{-1}_k\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        \partial(\mathbf R^T_k\mathbf R_k)
+        \boldsymbol{\Sigma}^{-1}_k \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+		\partial(\mathbf{R}^T_k \mathbf{R}_k)
     ) \\
     &= \Tr(
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
+        \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
         (
-            \partial\mathbf R^T_k\mathbf R_k
-            + \mathbf R^T_k\partial\mathbf R_k
+			\partial\mathbf{R}^T_k\mathbf{R}_k
+			+ \mathbf{R}^T_k \partial\mathbf{R}_k
         )
     ) \\
     &= \Tr(
-        \boldsymbol{\Sigma}^{-1}_k\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        \partial\mathbf R^T_k\mathbf R_k
-        +
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        \mathbf R^T_k\partial\mathbf R_k
+        \boldsymbol{\Sigma}^{-1}_k \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+		\partial\mathbf{R}^T_k \mathbf{R}_k
+        + \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+		\mathbf{R}^T_k \partial\mathbf{R}_k
     ) \\
     &= \Tr(
-        \mathbf R^T_k\partial\mathbf R_k
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        +
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        \mathbf R^T_k\partial\mathbf R_k
+		\mathbf{R}^T_k\partial\mathbf{R}_k
+        \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+        + \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+		\mathbf{R}^T_k \partial\mathbf{R}_k
     ) \\
     &= \Tr(
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        \mathbf R^T_k\partial\mathbf R_k
-        +
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\boldsymbol{\Sigma}^{-1}_k
-        \mathbf R^T_k\partial\mathbf R_k
+        \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+		\mathbf{R}^T_k \partial\mathbf{R}_k
+        + \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+        \mathbf{a}^T_{ik} \boldsymbol{\Sigma}^{-1}_k
+		\mathbf{R}^T_k\partial \mathbf{R}_k
     ) \\
-    &= 2\Tr(
-        \boldsymbol{\Sigma}_k^{-1}\mathbf{a}_{ik}
-        \mathbf{a}^T_{ik}\mathbf R^{-1}_k
-        \partial\mathbf R_k
+    &= 2 \Tr(
+        \boldsymbol{\Sigma}_k^{-1} \mathbf{a}_{ik}
+		\mathbf{a}^T_{ik}\mathbf{R}^{-1}_k
+		\partial\mathbf{R}_k
     ).
 \end{align*}
-
 Also,
 \begin{align*}
-    \partial\log\det\boldsymbol\Sigma_k^{-1} &=
-    \Tr(\boldsymbol\Sigma_k^{-T}\partial\boldsymbol\Sigma^{-1}_k) \\
-    &= \Tr(\boldsymbol\Sigma_k^{-T}\partial(
-        \mathbf R_k^T\mathbf R_k
+    \partial \log \det \boldsymbol \Sigma_k^{-1}
+	&= \Tr( \boldsymbol\Sigma_k^{-T} \partial\boldsymbol\Sigma^{-1}_k ) \\
+    &= \Tr( 
+		\boldsymbol\Sigma_k^{-T}
+		\partial( \mathbf{R}_k^T\mathbf{R}_k )
     ) \\
-    &= \Tr(\boldsymbol\Sigma_k^{-T}(
-        \partial\mathbf R_k^T\mathbf R_k
-        + \mathbf R_k^T\partial\mathbf R_k
-    ) \\
-    &= 2\Tr(\mathbf R^{-T}_k \partial\mathbf R_k)
+    &= \Tr( \boldsymbol\Sigma_k^{-T} (
+		\partial\mathbf{R}_k^T\mathbf{R}_k
+		+ \mathbf{R}_k^T\partial\mathbf{R}_k
+	)) \\
+	&= 2 \Tr( \mathbf{R}^{-T}_k \partial\mathbf{R}_k ).
 \end{align*}
-
 Finally, the answer is
 \[
-    \frac{\partial\ell}{\partial\boldsymbol\Sigma_k} =
-    \sum\limits_{i=1}^{N}\sum\limits_{j=1}^K r_{ik} \left(
-        -\mathbf R^{-1}_k
-        - \mathbf R ^{-T}_k(\mathbf{x}_i-\boldsymbol{\mu}_k)
-        (\mathbf{x}_i-\boldsymbol{\mu}_k)^T\boldsymbol{\Sigma}^{-1}_k
-    \right),
+    \frac{ \partial\ell }{ \partial\boldsymbol\Sigma_k } =
+    \sum\limits_{i=1}^{N} \sum\limits_{j=1}^K
+	r_{ik} \left(
+		- \mathbf{R}^{-1}_k - \mathbf{R}^{-T}_k ( \mathbf{x}_i - \boldsymbol{\mu}_k )
+        ( \mathbf{x}_i - \boldsymbol{\mu}_k )^T \boldsymbol{\Sigma}^{-1}_k
+    \right).
 \]
-but when performing gradient descent, we should change all the values of the
-gradient that are below the diagonal to zero,
-so $\mathbf{R}_k$ is upper-triangular.
+But when performing gradient descent, we should change all the values of the
+gradient that are below the diagonal to zero, forcing $\mathbf{R}_k$ to be upper-triangular.
 
 \setcounter{exercise}{12}
 \exercise
 
 Recall from Chapter 4 that
-\begin{equation}
-    \mathcal{N}(x_j|\theta, \sigma_j^2)\mathcal{N}(\theta|\mu, \tau^2)
+\[
+    \mathcal{N}( x_j | \theta, \sigma_j^2 ) \mathcal{N}( \theta | \mu, \tau^2 )
     = \mathcal{N}\left(
-        \theta|
-        \frac{\sigma_j^2\theta + \tau^2\mu}{\sigma_j^2+\tau^2}, 
-        \frac{\sigma_j^2\tau^2}{\sigma_j^2+\tau^2}
-    \right)
-\end{equation}
+        \theta
+		| \frac{ \sigma_j^2 \theta + \tau^2 \mu }{ \sigma_j^2 + \tau^2 }, 
+        \frac{ \sigma_j^2 \tau^2 }{ \sigma_j^2 + \tau^2 }
+    \right).
+\]
 It follows that
 \begin{align*}
-    Q(\eta^t, \eta^{(t-1)})
+    Q( \eta^t, \eta ^ { t-1 } )
     &= \sum\limits_j \mathbb{E}\left[
-        \log\mathcal{N}(\theta|m_{j,t}, s_{j,t}^2) |
-        x_j, m_{j,t-1}, s_{j,t-1}^2
+        \log \mathcal{N}( \theta | m_{j,t}, s_{j,t}^2 )
+		| x_j, m_{j, t-1}, s_{j, t-1}^2
     \right] \\
     &= \sum\limits_j \mathbb{E}\left[\left.
-         -\frac12\log(2\pi s_{j,t}^2) -\frac12\left(
-             \frac{\theta - m_{j,t}}{s_{j,t}}
-        \right)^2 \right|
-        x_j, m_{j,t-1}, s_{j,t-1}^2
+         -\frac12 \log( 2 \pi s_{j,t}^2 ) -\frac12 \left(
+             \frac{ \theta - m_{j,t} }{ s_{j,t} }
+        \right)^2
+		\right| x_j, m_{j,t-1}, s_{j,t-1}^2
     \right] \\
-    &= -\frac12\sum\limits_j 
-         \log(2\pi s_{j,t}^2) +
-         \frac1{s_{j,t}^2}\mathbb{E}\left[\left.
-             \theta^2 - 2\theta m_{j,t} + m_{j,t}^2
-        \right|
-        x_j, m_{j,t-1}, s_{j,t-1}^2
+    &= -\frac12 \sum\limits_j 
+         \log( 2 \pi s_{j,t}^2 )
+		 + \frac1{ s_{j,t}^2 } \mathbb{E}\left[\left.
+             \theta^2 - 2 \theta m_{j,t} + m_{j,t}^2
+        \right| x_j, m_{j,t-1}, s_{j,t-1}^2
     \right] \\
-    &= -\frac12\sum\limits_j 
-    \log(2\pi s_{j,t}^2) +
-    \frac1{s_{j,t}^2}\left(
+    &= -\frac12 \sum\limits_j 
+    \log( 2 \pi s_{j,t}^2 )
+	+ \frac1{ s_{j,t}^2 } \left(
         s_{j,t-1}^2 + m_{j,t-1}^2 - 2m_{j,t-1} m_{j,t} + m_{j,t}^2
-    \right)
+    \right),
 \end{align*}
 where $m_{j,t} = \frac{\sigma_j^2\mu_t + \tau_t^2x_j}{\sigma_j^2+\tau_t^2}$
 and $s_{j,t}^2 = \frac{\sigma_j^2\tau_t^2}{\sigma_j^2+\tau_t^2}$.
 
-Next, we optimize wrt to $\mu_t$.
+Next, we optimize wrt to $\mu_t$:
 \[
-    \frac{\partial m_{j,t}}{\partial\mu_t} = \frac{\sigma^2_j}{\sigma^2_j + \tau^2_t}
-    = 1 - \frac{\tau_t^2}{\sigma^2_j + \tau^2_t}
+    \frac{ \partial m_{j,t} }{ \partial\mu_t } = \frac{ \sigma^2_j }{ \sigma^2_j + \tau^2_t }
+    = 1 - \frac{ \tau_t^2 }{ \sigma^2_j + \tau^2_t }
 \]
 and
 \begin{align*}
-    \frac{\partial Q}{\partial \mu_t} &= -\frac12\sum\limits_j 
-    \frac1{s_{j,t}^2}\left(
+    \frac{ \partial Q }{ \partial \mu_t } &= -\frac12 \sum\limits_j 
+    \frac1{s_{j,t}^2} \left(
         s_{j,t-1}^2
         + m_{j,t-1}^2
-        - 2m_{j,t-1}\frac{\partial}{\partial \mu_t} \left(m_{j,t}\right)
-        +  \frac{\partial}{\partial \mu_t} \left(m_{j,t}^2\right)
+        - 2m_{j,t-1} \frac\partial{ \partial \mu_t } ( m_{j,t} )
+        + \frac\partial{\partial \mu_t} \left( m_{j,t}^2 \right)
     \right) \\
-    &= -\frac12\sum\limits_j 
-    \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2\tau_t^2}\left(
+    &= -\frac12 \sum\limits_j 
+    \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 \tau_t^2 }\left(
         s_{j,t-1}^2
         + m_{j,t-1}^2
-        - 2m_{j,t-1} \frac{\sigma^2_j}{\sigma^2_j + \tau^2_t}
-        + 2m_{j,t} \frac{\sigma^2_j}{\sigma^2_j + \tau^2_t}
+        - 2m_{j,t-1} \frac{ \sigma^2_j }{ \sigma^2_j + \tau^2_t }
+        + 2m_{j,t} \frac{ \sigma^2_j }{ \sigma^2_j + \tau^2_t }
     \right) \\
-    &= -\frac1{2\tau_t^2}\sum\limits_j 
-    \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} s_{j,t-1}^2
-    + \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} m_{j,t-1}^2
-    - 2m_{j,t-1}
-    + 2m_{j,t}
+    &= -\frac1{ 2 \tau_t^2 } \sum\limits_j 
+    \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } s_{j,t-1}^2
+    + \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } m_{j,t-1}^2
+    - 2 m_{j,t-1}
+    + 2 m_{j,t}.
 \end{align*}
 
 Now we set equal to 0 and solve:
 \begin{align*}
-    \frac{\partial Q}{\partial \mu_t} = 0 \\
-    -\frac1{2\tau_t^2}\sum\limits_j 
-    \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} s_{j,t-1}^2
-    + \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} m_{j,t-1}^2
-    - 2m_{j,t-1}
-    + 2m_{j,t} = 0 \\
+    \frac{ \partial Q }{ \partial\mu_t } = 0 \\
+    -\frac1{ 2 \tau_t^2 } \sum\limits_j 
+    \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } s_{j,t-1}^2
+    + \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } m_{j,t-1}^2
+    - 2 m_{j,t-1}
+    + 2 m_{j,t} = 0 \\
     \sum\limits_j 
-    \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} s_{j,t-1}^2
-    + \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} m_{j,t-1}^2
-    - 2m_{j,t-1}
-    + 2m_{j,t} = 0 \\
+    \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } s_{j,t-1}^2
+    + \frac{ \sigma_j^2+\tau_t^2 }{ \sigma_j^2 } m_{j,t-1}^2
+    - 2 m_{j,t-1}
+    + 2 m_{j,t} = 0 \\
     \sum\limits_j 
-    \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} s_{j,t-1}^2
-    + \frac{\sigma_j^2+\tau_t^2}{\sigma_j^2} m_{j,t-1}^2
-    - 2m_{j,t-1} = 
-    -\sum\limits_j  2m_{j,t}
+    \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } s_{j,t-1}^2
+    + \frac{ \sigma_j^2 + \tau_t^2 }{ \sigma_j^2 } m_{j,t-1}^2
+    - 2 m_{j,t-1} = 
+    - \sum\limits_j 2 m_{j,t}.
 \end{align*}
 
 You get the idea...

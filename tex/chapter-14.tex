@@ -19,96 +19,105 @@
 }
 \newcommand*{\subexercise}[1][]{
   \par{
-    \noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
+    \noindent\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad
   }
 }
 \title{Chapter 9}
 \author{stevenjin8}
-\date{\today}
+\date{April 14, 2021}
 
 \begin{document}
-  \maketitle
+\maketitle
 
-  \section*{Comments and Proofs}
-  \setcounter{section}{4}
-  \setcounter{subsection}{3}
-  \subsection{Kernel PCA}
+\section*{Comments and Proofs}
+\setcounter{section}{4}
+\setcounter{subsection}{3}
+\subsection{Kernel PCA}
 
-  It took me a while to understand this section. The idea is to leverage the Mercer property of
-  kernels to map the data to a larger (potentially infinite) dimension feature space and to compute
-  the principal components over said feature space. Given that, we first compute the Gram matrix:
-  \begin{align*}
-    \mathbf{K} = \boldsymbol{\Phi}\boldsymbol{\Phi} ^ T \\
-    k_{i,j} = \kappa(\mathbf{x}_i, \mathbf{x}_j)
-  \end{align*}
-  Using the eigenvalue/eigenvector trick presented earlier we find the formula for
-  $\mathbf{V}_{kpca}$. Thus the kpca embedding of a data point $\mathbf{x}_*$ is
-  $\phi(\mathbf{x_*}) \boldsymbol{\Phi}^T \mathbf{U} \boldsymbol{\Lambda} ^ {-\frac12}$ (
-  note that equation 14.40 is missing a transpose).
+It took me a while to understand this section. The idea is to leverage the Mercer property of
+kernels to map the data to a larger (potentially infinite) dimensional feature space and to compute
+the principal components over said feature space. Given that, we first compute the Gram matrix:
+\begin{align*}
+	\mathbf{K} = \boldsymbol{\Phi} \boldsymbol{\Phi}^T \\
+	k_{i,j} = \kappa( \mathbf{x}_i, \mathbf{x}_j ).
+\end{align*}
+Using the eigenvalue/eigenvector trick presented earlier we find the formula for
+$\mathbf{V}_{kpca}$. Thus the kpca embedding of a data point $\mathbf{x}_*$ is
+$\phi( \mathbf{x_*} ) \boldsymbol{\Phi}^T \mathbf{U} \boldsymbol{\Lambda} ^ {-\frac12}$ (
+note that equation 14.40 is missing a transpose).
 
-  I still don't understand algorithm 14.2. Given some new data $\mathbf{X}_*$, the vectorized
-  equation for $\tilde{\mathbf{K}}_*$ should
-  be
-  \begin{align*}
-    \tilde{\mathbf{K}}_* &= (\boldsymbol{\Phi}_* - \frac1N\sum \phi_i) \boldsymbol{\Phi}^T
-    \mathbf{U}_{:, 1: z} \boldsymbol{\Lambda}_{:, 1:z} \\
-    &= (\mathbf{K}_* - \mathbf{1}_{N_*} \overline{\mathbf{k}}^T
-    - \overline{\mathbf{k}}_* \mathbf{1}_N^T
-    + \overline{k} \mathbf{1}_{N_*} \mathbf{1}_{N}^T)
-    \mathbf{U}_{:, 1: z} \boldsymbol{\Lambda}_{:, 1:z}
-  \end{align*}
-  where $\mathbf{K}_* = \boldsymbol{\Phi}_* \Phi^T$ contain the pairwise kernel between the new data
-  and the training data; $\overline{\mathbf{k}}$ is the row-wise mean for $\mathbf{K}$;
-  $\overline{\mathbf{k}}_*$ is the row-wise mean of $\mathbf{K}_*$; and $\overline{k}$ is the
-  mean of all values in $\mathbf{K}$. There is an implementation of this in the notebooks folder.
+I still don't understand algorithm 14.2. Given some new data $\mathbf{X}_*$, the vectorized
+equation for $\tilde{\mathbf{K}}_*$ should
+be
+\begin{align*}
+	\tilde{\mathbf{K}}_* &= ( \boldsymbol{\Phi}_* - \frac1N \sum \phi_i ) \boldsymbol{\Phi}^T
+	\mathbf{U}_{ :, 1:z } \boldsymbol{\Lambda}_{ :, 1:z } \\
+	&= \left(
+		\mathbf{K}_* - \mathbf1_{N_*} \overline{\mathbf{k}}^T
+		- \overline{\mathbf{k}}_* \mathbf{1}_N^T
+		+ \overline{k} \mathbf{1}_{N_*} \mathbf{1}_{N}^T
+	\right)
+	\mathbf{U}_{:, 1: z} \boldsymbol{\Lambda}_{:, 1:z},
+\end{align*}
+where $\mathbf{K}_* = \boldsymbol{\Phi}_* \boldsymbol{\Phi}^T$ contains the pairwise kernel between
+the new data and the training data; $\overline{\mathbf{k}}$ is the row-wise mean for $\mathbf{K}$;
+$\overline{\mathbf{k}}_*$ is the row-wise mean of $\mathbf{K}_*$; and $\overline{k}$ is the
+mean of all values in $\mathbf{K}$.
 
-  Regardless, line 8 of the equation cannot be correct since both $\mathbf{O}_*$ and $\mathbf{K}_*$
-  are $N_* \times N$. Thus, three out of the four terms are not defined.
+Regardless, line 8 of the equation cannot be correct since both $\mathbf{O}_*$ and $\mathbf{K}_*$
+are $N_* \times N$.
 
-  Something that I found really interesting is that we do not normalize the columns of
-  $\boldsymbol{\Phi}$. It makes sense, however, the whole idea of KPCA is centered around
-  the kernel function and dimensions in the feature space that have more extreme values
-  are going to have a larger impact on the kernel.
-  \section*{Exercises}
+Something that I found really interesting is that we do not normalize the columns of
+$\boldsymbol{\Phi}$. It makes sense, however, the whole idea of KPCA is centered around
+the kernel function and dimensions in the feature space that have more extreme values
+are going to have a larger impact on the latent values.
 
-  \exercise
+\section*{Exercises}
 
-  \subexercise
-  The plane that separates $\phi(\mathbf{x}_1)$ and $\phi(\mathbf{x}_2)$ with the largest margin
-  is perpendicular to $\phi(\mathbf{x}_2) - \phi(\mathbf{x}_1)$. So $\mathbf{w} \parallel
-  \phi(\mathbf{x}_2) - \phi(\mathbf{x}_1) = \langle 0, 2, 2 \rangle$.
+\exercise
+\subexercise
+The plane that separates $\phi( \mathbf{x}_1 )$ and $\phi( \mathbf{x}_2 )$ with the largest margin
+is perpendicular to $\phi( \mathbf{x}_2 ) - \phi( \mathbf{x}_1 )$. So, $\mathbf{w} \parallel
+\phi( \mathbf{x}_2 ) - \phi( \mathbf{x}_1 ) = \langle 0, 2, 2 \rangle$.
 
-  \subexercise
-  The value of the margin is $\sqrt{2}$: half of the distance between $\phi(\mathbf{x}_1)$ and
-  $\phi(\mathbf{x}_2)$.
+\subexercise
+The value of the margin is $\sqrt{2}$: half the distance between $\phi( \mathbf{x}_1 )$ and
+$\phi( \mathbf{x}_2 )$.
 
-  \subexercise
-  \[\mathbf{w} = \langle 0, \frac12 \frac12 \rangle\]
+\subexercise
+\[
+	\mathbf{w} = \left\langle 0, \frac12 \frac12 \right\rangle.
+\]
 
-  \subexercise
-  Plugging in our values, we have
-  \begin{align*}
-    -w_0 &> 1 \\
-    2 + w_0 &> 1.
-  \end{align*}
-  Thus, $w_0 = -1$.
+\subexercise
+Plugging in our values, we have
+\begin{align*}
+	-w_0 &> 1 \\
+	2 + w_0 &> 1.
+\end{align*}
+Thus, $w_0 = -1$.
 
-  \subexercise
-  \[f(x) = -1 + \frac{\sqrt{2}}{2}x + \frac12 x^2\]
+\subexercise
+\[
+	f(x) = -1 + \frac{ \sqrt{ 2 }}2 x + \frac12 x^2.
+\]
 
-  \exercise
-  The resulting decision boundary is guaranteed to separate the classes. At a high level, this is
-  a result of the fact that we are regularizing $||\mathbf{w}||$ and not $w_0$.
+\exercise
+The resulting decision boundary is guaranteed to separate the classes. At a high level, this is
+a result of the fact that we are regularizing $\lVert \mathbf{w} \rVert$ and not $w_0$.
 
-  By definition, there exists $\mathbf{w}$ and $w_0$ such that
-  \[y_i(\mathbf{w}^T \phi(\mathbf{x}_i) + w_0) > 0\] for all $i$. However, we can scale
-  $\mathbf{w}$ and $w_0$ by any $a > 0$ while preserving the above inequality:
-   \begin{align*}
-    y_i(\mathbf{w}^T \phi(\mathbf{x}_i) + w_0) &> 0 \\
-    ay_i(\mathbf{w}^T \phi(\mathbf{x}_i) + w_0) &> 0 \\
-    y_i((a\mathbf{w})^T \phi(\mathbf{x}_i) + aw_0) &> 0.
-  \end{align*}
-  in other words we can scale $\mathbf{w}$ arbitrarily while having $f$ perfectly classify the
-  data. Thus, the regularization loss is meaningless.
+By definition, there exists $\mathbf{w}$ and $w_0$ such that
+\[
+	y_i( \mathbf{w}^T \phi( \mathbf{x}_i ) + w_0 ) > 0
+\]
+for all $i$. However, we can scale $\mathbf{w}$ and $w_0$ by any $a > 0$ while preserving the above
+inequality:
+\begin{align*}
+	y_i( \mathbf{w}^T \phi( \mathbf{x}_i ) + w_0 ) &> 0 \\
+	a y_i( \mathbf{w}^T \phi( \mathbf{x}_i ) + w_0 ) &> 0 \\
+	y_i(( a\mathbf{w} )^T \phi( \mathbf{x}_i ) + aw_0 ) &> 0.
+\end{align*}
+in other words we can scale $\mathbf{w}$ arbitrarily while having $f$ perfectly classify the
+data. Thus, the regularization loss is meaningless.
 
 \end{document}

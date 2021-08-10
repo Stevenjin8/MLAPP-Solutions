@@ -19,72 +19,98 @@
 
 \begin{document}
 \maketitle
-\section{Proofs}
+\section*{Proofs}
 \subsection*{Equation 7.54}
-One of the results that I did not find trivial was equation 7.54.
-Perhaps it was proven somewhere in Chapter 4.
-I prove the in this subsection. As a reminder, the equation in question is
+I equation 7.54 to be trivial.  Perhaps it was proven somewhere in Chapter 4, but the proof is as
+folows.  As a reminder, the equation in question is
 \[
-    p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2) \propto
-\exp(-\frac{1}{2\sigma^2}\|\mathbf{y} - \bar{y}\mathbf{1}_N - \mathbf{Xw}\|_2^2).
+    p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2)
+	\propto \exp(-\frac{1}{2\sigma^2}\lVert\mathbf{y} - \bar{y}\mathbf{1}_N - \mathbf{Xw}\rVert_2^2).
 \]
 As the author says, we must "integrate [$\mu$] out":
 \[
     p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2) = 
-    \int p(\mathbf{y},\mu|\mathbf{X}, \mathbf{w}, \sigma^2) d\mu.\\
+	\int p(\mathbf{y},\mu|\mathbf{X}, \mathbf{w}, \sigma^2) d\mu.\\
 \]
 Since $\mu$ is independent and $p(\mu)$ is constant for all $\mu \in \mathbb{R}$,
 \begin{align*}
-p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2) & \propto
-\int p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \mu, \sigma^2)d\mu \\
-& \propto \int\exp\left(\frac{
-\left(\mathbf{y} - \mu\mathbf{1}_N -\mathbf{Xw}\right)^2 
-}{-2\sigma^2}\right)d\mu.
+	p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2) & \propto
+	\int p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \mu, \sigma^2)d\mu \\
+	& \propto \int\exp\left(\frac{
+		\left(\mathbf{y} - \mu\mathbf{1}_N -\mathbf{Xw}\right)^2 
+	}{-2\sigma^2}\right)d\mu.
 \end{align*}
 In this section, $\mathbf{v}^2 = \mathbf{v}.\mathbf{v}$ for any vector $\mathbf{v}$.
 
 Next, we expand and take all terms that are independent of $\mu$ out of the
 integral:
 \begin{align*}
-p(\mathbf{y}|\mathbf{X}&, \mathbf{w}, \sigma^2) \propto \\
-\int\exp&\left(\frac{\mathbf{y}^2 - 2\mathbf{y}.(\mu\mathbf{1})
-+(\mu\mathbf{1})^2 + 2(\mu\mathbf{1}).(\mathbf{Xw})
-+ (\mathbf{Xw})^2 + 2(\mathbf{Xw}).\mathbf{y}}
-{-2\sigma^2}\right) d\mu \\
-\propto \exp&\left(\frac{\mathbf{y}^2 + 2(\mathbf{Xw}).\mathbf{y} +
-(\mathbf{Xw})^2}{-2\sigma^2}\right) \\
-&\int\exp\left(\frac{-2\mathbf{y}.(\mu\mathbf{1}) + (\mu\mathbf{1})^2 + 2
-(\mu\mathbf{1}).(\mathbf{Xw})}
-{-2\sigma^2}\right)d\mu.
+	p(\mathbf{y}|\mathbf{X}&, \mathbf{w}, \sigma^2) \propto \\
+	\int\exp&\left(
+		\frac{\mathbf{y}^2 - 2\mathbf{y} . (\mu\mathbf{1})
+		+ (\mu\mathbf{1})^2 + 2(\mu\mathbf{1}) . (\mathbf{Xw})
+		+ (\mathbf{Xw})^2 + 2(\mathbf{Xw}) . \mathbf{y}} {-2\sigma^2}
+	\right) d\mu \\
+	\propto \exp &\left(
+		\frac{\mathbf{y}^2 + 2(\mathbf{Xw}).\mathbf{y} + (\mathbf{Xw})^2}{-2\sigma^2}
+	\right) \\
+	&\int\exp\left(
+		\frac{-2\mathbf{y}.(\mu\mathbf{1}) + (\mu\mathbf{1})^2 + 2
+		(\mu\mathbf{1}).(\mathbf{Xw})}
+		{-2\sigma^2}
+	\right)d\mu.
 \end{align*}
 
-Since $\sum_ix_{ij}=0$, we can ignore
-$\mu\mathbf{1}.\mathbf{Xw}$, and
-complete the square:
-\begin{equation}\begin{split}
-&\int\exp\left(\frac{-2\mathbf{y}.(\mu\mathbf{1}) + (\mu\mathbf{1})^2 + (\mu\mathbf{1}).(\mathbf{Xw})}
-{-2\sigma^2}\right)d\mu \\
-&=\int\exp\left(\frac{N(-2\mu\bar{y} + \mu^2)}{-2\sigma^2}\right)d\mu\\
-&= \exp\left(\frac{-N\bar{y}^2  }{-2\sigma^2}\right)
-\int\exp\left(\frac{N(\mu - \bar{y})^2}{-2\sigma^2}\right)d\mu\\
-&\propto \exp\left(\frac{-N\bar{y}^2  }{-2\sigma^2}\right) \\
-&= \exp\left(\frac{-(\bar{y}\mathbf{1})^2}{-2\sigma^2}\right)
-\end{split}\end{equation}
+Since $\sum_ix_{ij}=0$, we can ignore $\mu\mathbf{1}.\mathbf{Xw}$, and complete the square:
+\begin{align*}
+	&\int\exp\left(
+		\frac{-2\mathbf{y}.(\mu\mathbf{1})
+		+ (\mu\mathbf{1})^2
+		+ (\mu\mathbf{1}).(\mathbf{Xw})} {-2\sigma^2}
+	\right)d\mu \\
+	&=\int\exp\left(
+		\frac{N(-2\mu\bar{y}
+		+ \mu^2)}{-2\sigma^2}
+	\right)d\mu\\
+	&= \exp\left(
+		\frac{-N\bar{y}^2}{-2\sigma^2}
+	\right) \int\exp\left(
+		\frac{N(\mu - \bar{y})^2}{-2\sigma^2}
+	\right)d\mu\\
+	&\propto \exp\left(\frac{-N\bar{y}^2}{-2\sigma^2}\right) \\
+	&= \exp\left(
+		\frac{-(\bar{y}\mathbf{1})^2}{-2\sigma^2}
+	\right).
+\end{align*}
 Plugging this result back into equation (1) yields
-\begin{equation}\begin{split}
-p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2) &
-\propto \exp\left(\frac{\mathbf{y}^2 - (\bar{y}\mathbf{1})^2 -2(\mathbf{Xw}).\mathbf{y} +
-(\mathbf{Xw})^2}{-2\sigma^2}\right) \\
-&= \exp\left(\frac{(\mathbf{y}-\bar{y}\mathbf{1})^2 -2(\mathbf{Xw}).\mathbf{y} +
-(\mathbf{Xw})^2}{-2\sigma^2}\right) \\
-&= \exp\left(\frac{(\mathbf{y}-\bar{y}\mathbf{1})^2 -2(\mathbf{Xw}).(\mathbf{y}- \bar{y}\mathbf{1}) +
-(\mathbf{Xw})^2}{-2\sigma^2}\right) \\
-& = \exp(-\frac{1}{2\sigma^2}\|\mathbf{y} - \bar{y}\mathbf{1}_N - \mathbf{Xw}\|_2^2).
-\end{split}\end{equation}
+\begin{align*}
+	p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \sigma^2) &
+	\propto \exp\left(
+		\frac{
+			\mathbf{y}^2 - (\bar{y}\mathbf{1})^2 - 2(\mathbf{Xw}).\mathbf{y} + (\mathbf{Xw})^2
+		}{-2\sigma^2}
+	\right) \\
+	&= \exp\left(
+		\frac{
+			(\mathbf{y}-\bar{y}\mathbf{1})^2 - 2(\mathbf{Xw}).\mathbf{y} + (\mathbf{Xw})^2
+		}{-2\sigma^2}
+	\right) \\
+	&= \exp\left(
+		\frac{
+			(\mathbf{y}-\bar{y}\mathbf{1})^2
+			- 2(\mathbf{Xw}) . (\mathbf{y} - \bar{y}\mathbf{1})
+			+ (\mathbf{Xw})^2
+		}{-2\sigma^2}
+	\right) \\
+	& = \exp\left(
+		-\frac1{2\sigma^2}\lVert\mathbf{y} - \bar{y}\mathbf{1}_N - \mathbf{Xw}\rVert_2^2
+	\right).
+\end{align*}
+
 \section*{Exercises}
 \setcounter{exercise}{8}
 \exercise
-In this exercise we use the results of section 4.3.1 to arrive at the same
+In this exercise, we use the results of section 4.3.1 to arrive at the same
 formula as that of exercise 7.5:
 \[
     \mathbb{E}[y|\mathbf{x}] = \bar{y} -  \mathbf{w}^T\bar{\mathbf{x}} + \mathbf{w}^T\mathbf{x}
@@ -96,9 +122,9 @@ and $\mathbf{\Sigma}_{XY}$ of the joint distribution:
     \mathbf{\Sigma} & = \begin{pmatrix}
         \mathbf{\Sigma}_{YY} & \mathbf{\Sigma}_{YX} \\
         \mathbf{\Sigma}_{XY} & \mathbf{\Sigma}_{XX} \\
-    \end{pmatrix} \\
+    \end{pmatrix}, \\
     & = \begin{pmatrix} \mathbf{y} & \mathbf{X} \end{pmatrix}^T
-    \begin{pmatrix} \mathbf{y} & \mathbf{X} \end{pmatrix} \\
+    \begin{pmatrix} \mathbf{y} & \mathbf{X} \end{pmatrix}, \\
     & = \begin{pmatrix}
         \mathbf{y}^T \mathbf{y} & \mathbf{y}^T \mathbf{X} \\ 
         \mathbf{X}^T \mathbf{y} & \mathbf{X}^T \mathbf{X} \\ 
@@ -109,7 +135,7 @@ Thus,
     \mathbf{\Sigma}_{XX} = \mathbf{X}^T\mathbf{X} \\
     \mathbf{\Sigma}_{YX} = \mathbf{y}^T\mathbf{X}.
 \end{split}\end{equation}
-I know the question said to find $\mathbf{\Sigma}_{XY}$, but I think we are supposed to find
+I know the question said to find $\mathbf{\Sigma}_{XY}$, but I think the author meant
 $\mathbf{\Sigma}_{YX}$. Finding the means $\boldsymbol{\mu}_x$ and $\boldsymbol{\mu}_y$ 
 is a lot easier:
 \begin{equation}\begin{split}
@@ -117,7 +143,7 @@ is a lot easier:
     \mu_y = \bar{y} = \frac{1}{N}\sum y_i.
 \end{split}\end{equation}
 
-Now, we plug (3) and (4) into equation 4.69 and replace $1$ with
+Now, we plug (1) and (2) into equation 4.69 and replace $1$ with
 $y$ and $2$ with $x$.  Given $\mathbf{x}$ our prediction for $y$ is
 \begin{align*}
     \mu_{y|x} & = \mu_y + \mathbf{\Sigma}_{YX} \mathbf{\Sigma}_{XX}^{-1}
@@ -131,8 +157,8 @@ $y$ and $2$ with $x$.  Given $\mathbf{x}$ our prediction for $y$ is
 \end{align*}
 Recall that $\mathbf{X}^T\mathbf{X}$ is symmetric so $(\mathbf{X}^T\mathbf{X})^{-T} = 
 (\mathbf{X}^T\mathbf{X})^{-1}$.
-I find it reassuring that the discriminative and generative approach converge to the
-same solution. That being said, I am not sure what the author is looking for in part b)
-as in both approaches, one ends up doing the same calculations.
 
+I find it reassuring that the discriminative and generative approach converge to the same solution.
+That being said, I am not sure what the author is looking for in part b
+as in both approaches, one ends up doing the same calculations.
 \end{document}

@@ -19,50 +19,51 @@
 }
 \newcommand*{\subexercise}[1][]{
   \par{
-    \noindent\textbf{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
+    \noindent{\ifx/#1/\protect\stepcounter{subexercise}\alph{subexercise}\else#1\fi.\quad}
   }
 }
 \title{Chapter 20}
 \author{stevenjin8}
-\date{\today}
+\date{June 26, 2021}
 
 \begin{document}
-  \maketitle
+	\maketitle
 
-  \section*{Comments and Proofs}
-  I did not retain much from this chapter...
-  \section*{Exercises}
-  
-  \setcounter{exercise}{2}
-  \exercise
-  \subexercise
-  We first use Bayes law to "flip" the conditionals and then compute the marginals:
-  \begin{align*}
-    p(G_1|X_2=50) &\propto p(X_2=50|G_1)p(G_1) \\
-    &\propto p(X_2=50|G_1) \\
-    &\propto p(X_2=50|G_2=1)p(G_2=1|G_1) + p(X_2=50|G_2=2)p(G_2=2|G_1)
-  \end{align*}
-  Plugging in the numbers, we get $p(G_1|X_2=50) = [0.895,1.05]$.
+	\section*{Comments}
+	I did not retain much from this chapter...
 
-  \subexercise
-  The key realization here is that $p(X_2|G1)=p(X_3|G_1)$ since the transition matrices are equal.
-  Thus,
-  \begin{align*}
-    p(G_1=1|X_2=50, X_3=50) &= p(X_2=50, X_3=50|G_1=1) \\
-    &= p(X_2=50|G_1=1)p(X_3=50|G_1=1) \\
-    &= p(X_2=50|G_1=1) ^ 2, \\
-    p(G_1|X_2=50, X_3=50) &= [0.986, 0.014].
-  \end{align*}
-  It makes sense that $p(G_1=1|X_2=50,X_3=50) > p(G_1=1|X_2=50)$, since in the former case,
-  there is more evidence for $G_1=1$.
-  
-  \subexercise
-  Now, there is equal evidence that $G=0$ as there was for $G=1$ in part b, and the prior
-  distribution for $G_1$ is uniform. Thus, we can flip the distribution and
-  $p(G_1|X_2=60, X_3=60) = [0.014, 0.986]$.
+	\section*{Exercises}
+	\setcounter{exercise}{2}
+	\exercise
+	\subexercise
+	We first use Bayes law to "flip" the conditionals and then compute the marginals:
+	\begin{align*}
+		p( G_1 | X_2=50 ) &\propto p( X_2=50 | G_1 ) p( G_1 ) \\
+		&\propto p( X_2=50 | G_1 ) \\
+		&\propto p( X_2=50 | G_2=1 ) p( G_2=1|G_1 ) + p( X_2=50 | G_2=2 ) p( G_2=2 | G_1 )
+	\end{align*}
+	Plugging in the numbers, we get $p( G_1 | X_2=50 ) = [ 0.895 , 1.05 ]$.
 
-  \subexercise
-  I think the author meant to ask for $p(G_1|X_2=50,X_3=60)$. If that is the case, there
-  is equal evidence for $G=1$ and $G=0$. Thus, the posterior of $G_1$ is just its prior:
-  $p(G_1|X_2=50,X_3=60) = [0.5, 0.5]$.
+	\subexercise
+	The key realization here is that $p( X_2 | G1 ) = p( X_3 | G_1 )$ since the transition matrices
+	are equal.  Thus,
+	\begin{align*}
+		p( G_1=1 | X_2=50, X_3=50 ) &= p( X_2=50, X_3=50 | G_1=1 ) \\
+		&= p( X_2=50 | G_1=1 ) p( X_3=50 | G_1=1 ) \\
+		&= p( X_2=50 | G_1=1 )^2, \\
+		p( G_1 | X_2=50, X_3=50 ) &= [ 0.986, 0.014 ].
+	\end{align*}
+	It makes sense that $p ( G_1=1 | X_2=50, X_3=50) > p( G_1=1 | X_2=50 )$, since, in the former
+	case, there is more evidence for $G_1=1$.
+
+	\subexercise
+	Now, there is equal evidence that $G_1 = 0$ as there was for $G_1 = 1$ in part b, and the prior
+	distribution for $G_1$ is uniform. Thus, we can flip the distribution and
+	$p( G_1 | X_2=60, X_3=60 ) = [ 0.014, 0.986 ]$.
+
+	\subexercise
+	I think the author meant to ask for $p( G_1 | X_2=50,X_3=60 )$. If that is the case, there
+	is equal evidence for $G = 1$ and $G_1 = 0$. Thus, the posterior of $G_1$ is just its prior:
+	$p( G_1 | X_2=50, X_3=60 ) = [ 0.5, 0.5 ]$.
 \end{document}
+
